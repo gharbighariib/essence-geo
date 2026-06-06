@@ -7,436 +7,457 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap');
 
+  /* ══ THEME TOKENS ══ */
   :root {
-    --bg: #0a0c12;
-    --bg2: #0f1219;
-    --bg3: #151923;
-    --card: #161b25;
-    --card2: #1c2334;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8eaf0;
-    --text2: #9ba3b8;
-    --text3: #616980;
-    --gold: #f5c842;
-    --gold2: #e6b020;
-    --blue: #4a9eff;
-    --blue2: #2c7de8;
-    --purple: #a855f7;
-    --purple2: #8b35e8;
-    --green: #34d399;
-    --red: #f87171;
-    --geo: #4a9eff;
-    --hist: #a855f7;
-    --radius: 16px;
-    --radius-sm: 10px;
+    --bg: #0a0c12; --bg2: #0f1219; --bg3: #151923;
+    --card: #161b25; --card2: #1c2334;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0; --text2: #9ba3b8; --text3: #616980;
+    --gold: #f5c842; --gold2: #e6b020;
+    --blue: #4a9eff; --blue2: #2c7de8;
+    --purple: #a855f7; --purple2: #8b35e8;
+    --green: #34d399; --red: #f87171;
+    --geo: #4a9eff; --hist: #a855f7;
+    --radius: 16px; --radius-sm: 10px;
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
     --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
     --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    --topbar-bg: rgba(10,12,18,0.92);
+    --header-grad: linear-gradient(160deg,#0f1a2e 0%,#0a0c12 60%);
+    --fc-front: linear-gradient(135deg,#1c2334,#161b25);
+    --fc-back: linear-gradient(135deg,#1a2540,#101825);
+  }
+  body.light {
+    --bg: #f0f2f8; --bg2: #e8eaf2; --bg3: #dde0ec;
+    --card: #ffffff; --card2: #eef0f8;
+    --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.14);
+    --text: #181c2e; --text2: #4a5070; --text3: #8a90a8;
+    --topbar-bg: rgba(240,242,248,0.94);
+    --header-grad: linear-gradient(160deg,#d8e4f8 0%,#f0f2f8 60%);
+    --fc-front: linear-gradient(135deg,#ffffff,#eef0f8);
+    --fc-back: linear-gradient(135deg,#e8f0ff,#dde4f5);
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
   html { scroll-behavior: smooth; }
-
   body {
-    font-family: 'Cairo', 'Tajawal', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    font-size: 16px;
-    line-height: 1.7;
+    font-family: 'Cairo','Tajawal',sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+    font-size: 16px; line-height: 1.7;
+    transition: background 0.3s, color 0.3s;
   }
 
-  /* ── PROGRESS BAR ── */
-  #scroll-progress {
-    position: fixed; top: 0; right: 0; left: 0; z-index: 999;
-    height: 3px; background: transparent; pointer-events: none;
-  }
-  #scroll-progress-bar {
-    height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold2));
-    transition: width 0.1s linear; border-radius: 0 2px 2px 0;
-  }
+  /* ── SCROLL PROGRESS ── */
+  #scroll-progress { position:fixed;top:0;right:0;left:0;z-index:999;height:3px;pointer-events:none; }
+  #scroll-progress-bar { height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .1s linear;border-radius:0 2px 2px 0; }
 
   /* ── RIPPLE ── */
-  .ripple-container { position: relative; overflow: hidden; }
-  .ripple {
-    position: absolute; border-radius: 50%;
-    transform: scale(0); animation: rippleAnim 0.5s linear;
-    background: rgba(255,255,255,0.12); pointer-events: none;
-  }
-  @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+  .ripple-container { position:relative;overflow:hidden; }
+  .ripple { position:absolute;border-radius:50%;transform:scale(0);animation:rippleAnim .5s linear;background:rgba(255,255,255,0.12);pointer-events:none; }
+  body.light .ripple { background:rgba(0,0,0,0.08); }
+  @keyframes rippleAnim { to { transform:scale(4);opacity:0; } }
 
   /* ── VIEWS ── */
-  .view { display: none; }
-  .view.active { display: block; }
+  .view { display:none; }
+  .view.active { display:block; }
 
-  /* ── HOME ── */
-  #home { min-height: 100vh; padding-bottom: 40px; }
+  /* ── THEME TOGGLE ── */
+  #theme-toggle {
+    position:fixed; top:12px; left:12px; z-index:998;
+    width:40px; height:40px; border-radius:12px;
+    background:var(--card); border:1.5px solid var(--border2);
+    color:var(--text2); cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:var(--transition); box-shadow:var(--shadow);
+  }
+  #theme-toggle:hover { color:var(--gold); border-color:rgba(245,200,66,0.4); }
 
+  /* ══════ HOME ══════ */
+  #home { min-height:100vh; padding-bottom:40px; }
   .home-header {
-    background: linear-gradient(160deg, #0f1a2e 0%, #0a0c12 60%);
-    padding: 48px 20px 36px;
-    position: relative; overflow: hidden;
-    border-bottom: 1px solid var(--border);
+    background:var(--header-grad);
+    padding:48px 20px 36px; position:relative; overflow:hidden;
+    border-bottom:1px solid var(--border);
   }
   .home-header::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,158,255,0.1) 0%, transparent 70%);
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(74,158,255,0.1) 0%,transparent 70%);
   }
-  .home-header-inner { position: relative; max-width: 680px; margin: 0 auto; text-align: center; }
-
+  .home-header-inner { position:relative;max-width:680px;margin:0 auto;text-align:center; }
   .app-logo {
-    width: 64px; height: 64px; margin: 0 auto 16px;
-    background: linear-gradient(135deg, rgba(74,158,255,0.2), rgba(168,85,247,0.2));
-    border: 1.5px solid var(--border2); border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
+    width:64px;height:64px;margin:0 auto 16px;
+    background:linear-gradient(135deg,rgba(74,158,255,0.2),rgba(168,85,247,0.2));
+    border:1.5px solid var(--border2);border-radius:18px;
+    display:flex;align-items:center;justify-content:center;font-size:28px;
   }
   .app-title {
-    font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 900;
-    background: linear-gradient(120deg, #e8eaf0, var(--gold));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    line-height: 1.2; letter-spacing: -0.5px;
+    font-size:clamp(1.8rem,6vw,2.6rem);font-weight:900;
+    background:linear-gradient(120deg,var(--text),var(--gold));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    line-height:1.2;letter-spacing:-0.5px;
   }
-  .app-subtitle {
-    color: var(--text2); font-size: 0.95rem; margin-top: 8px;
-    font-weight: 400;
-  }
+  .app-subtitle { color:var(--text2);font-size:.95rem;margin-top:8px; }
   .progress-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25);
-    color: var(--green); font-size: 0.82rem; padding: 4px 12px;
-    border-radius: 20px; margin-top: 14px; font-weight: 600;
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);
+    color:var(--green);font-size:.82rem;padding:4px 12px;
+    border-radius:20px;margin-top:14px;font-weight:600;
   }
 
-  /* ── SUBJECT TABS ── */
-  .subject-tabs {
-    display: flex; gap: 8px; padding: 20px 16px 4px;
-    max-width: 680px; margin: 0 auto;
-  }
+  /* subject tabs */
+  .subject-tabs { display:flex;gap:8px;padding:20px 16px 4px;max-width:680px;margin:0 auto; }
   .subject-tab {
-    flex: 1; padding: 12px 8px; border-radius: 12px;
-    border: 1.5px solid var(--border); background: var(--card);
-    color: var(--text2); font-family: 'Cairo', sans-serif;
-    font-size: 0.95rem; font-weight: 700; cursor: pointer;
-    transition: var(--transition); display: flex; align-items: center;
-    justify-content: center; gap: 6px;
+    flex:1;padding:12px 8px;border-radius:12px;
+    border:1.5px solid var(--border);background:var(--card);
+    color:var(--text2);font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;
+    cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:6px;
   }
-  .subject-tab:hover { border-color: var(--border2); color: var(--text); }
-  .subject-tab.active.geo { border-color: var(--geo); color: var(--geo); background: rgba(74,158,255,0.08); }
-  .subject-tab.active.hist { border-color: var(--purple); color: var(--purple); background: rgba(168,85,247,0.08); }
+  .subject-tab:hover { border-color:var(--border2);color:var(--text); }
+  .subject-tab.active.geo { border-color:var(--geo);color:var(--geo);background:rgba(74,158,255,0.08); }
+  .subject-tab.active.hist { border-color:var(--purple);color:var(--purple);background:rgba(168,85,247,0.08); }
 
-  /* ── LESSON CARDS ── */
-  .cards-grid {
-    padding: 16px; max-width: 680px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr; gap: 12px;
-  }
-
+  /* lesson cards */
+  .cards-grid { padding:16px;max-width:680px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:12px; }
   .lesson-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px;
-    cursor: pointer; position: relative; overflow: hidden;
-    transition: var(--transition); user-select: none;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;
+    cursor:pointer;position:relative;overflow:hidden;
+    transition:var(--transition);user-select:none;
   }
-  .lesson-card:hover {
-    border-color: var(--border2); transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  .lesson-card:active { transform: scale(0.98); }
-  .lesson-card.geo-card:hover { border-color: rgba(74,158,255,0.35); box-shadow: 0 4px 24px rgba(74,158,255,0.1); }
-  .lesson-card.hist-card:hover { border-color: rgba(168,85,247,0.35); box-shadow: 0 4px 24px rgba(168,85,247,0.1); }
-
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .card-left { flex: 1; }
+  .lesson-card:hover { border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow); }
+  .lesson-card:active { transform:scale(0.98); }
+  .lesson-card.geo-card:hover { border-color:rgba(74,158,255,0.35);box-shadow:0 4px 24px rgba(74,158,255,0.1); }
+  .lesson-card.hist-card:hover { border-color:rgba(168,85,247,0.35);box-shadow:0 4px 24px rgba(168,85,247,0.1); }
+  .card-top { display:flex;align-items:flex-start;justify-content:space-between;gap:12px; }
+  .card-left { flex:1; }
   .card-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 0.72rem; font-weight: 700; padding: 3px 8px;
-    border-radius: 6px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:.72rem;font-weight:700;padding:3px 8px;
+    border-radius:6px;margin-bottom:8px;
   }
-  .badge-geo { background: rgba(74,158,255,0.12); color: var(--geo); border: 1px solid rgba(74,158,255,0.2); }
-  .badge-hist { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
-
-  .card-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.4; }
-  .card-desc { font-size: 0.83rem; color: var(--text3); margin-top: 4px; font-weight: 400; }
-
+  .badge-geo { background:rgba(74,158,255,0.12);color:var(--geo);border:1px solid rgba(74,158,255,0.2); }
+  .badge-hist { background:rgba(168,85,247,0.12);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+  .card-title { font-size:1rem;font-weight:700;color:var(--text);line-height:1.4; }
   .card-arrow {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: var(--bg3); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 14px; color: var(--text3);
-    transition: var(--transition);
+    width:36px;height:36px;border-radius:10px;
+    background:var(--bg3);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;font-size:14px;color:var(--text3);transition:var(--transition);
   }
-  .lesson-card:hover .card-arrow { color: var(--text); background: var(--card2); }
-  .geo-card:hover .card-arrow { color: var(--geo); border-color: rgba(74,158,255,0.3); }
-  .hist-card:hover .card-arrow { color: var(--purple); border-color: rgba(168,85,247,0.3); }
+  .lesson-card:hover .card-arrow { color:var(--text);background:var(--card2); }
+  .geo-card:hover .card-arrow { color:var(--geo);border-color:rgba(74,158,255,0.3); }
+  .hist-card:hover .card-arrow { color:var(--purple);border-color:rgba(168,85,247,0.3); }
+  .card-bottom { display:flex;align-items:center;justify-content:space-between;margin-top:14px; }
+  .card-modes { display:flex;gap:6px; }
+  .mode-dot { width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px; }
+  .dot-gold { background:rgba(245,200,66,0.12);color:var(--gold); }
+  .dot-blue { background:rgba(74,158,255,0.12);color:var(--blue); }
+  .dot-purple { background:rgba(168,85,247,0.12);color:var(--purple); }
+  .dot-teal { background:rgba(52,211,153,0.12);color:var(--green); }
+  .completed-badge { display:inline-flex;align-items:center;gap:4px;font-size:.75rem;color:var(--green);font-weight:600; }
 
-  .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
-  .card-modes { display: flex; gap: 6px; }
-  .mode-dot {
-    width: 22px; height: 22px; border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px;
-  }
-  .dot-gold { background: rgba(245,200,66,0.12); color: var(--gold); }
-  .dot-blue { background: rgba(74,158,255,0.12); color: var(--blue); }
-  .dot-purple { background: rgba(168,85,247,0.12); color: var(--purple); }
-
-  .completed-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 0.75rem; color: var(--green); font-weight: 600;
-  }
-
-  /* ── LESSON VIEW ── */
-  #lesson { min-height: 100vh; }
-
+  /* ══════ LESSON VIEW ══════ */
+  #lesson { min-height:100vh; }
   .lesson-topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(10,12,18,0.92); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
+    position:sticky;top:0;z-index:100;
+    background:var(--topbar-bg);backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);padding:0 16px;
+    transition:background .3s;
   }
-  .lesson-topbar-inner { max-width: 680px; margin: 0 auto; }
-  .topbar-row1 {
-    display: flex; align-items: center; gap: 12px; padding: 12px 0 8px;
-  }
+  .lesson-topbar-inner { max-width:680px;margin:0 auto; }
+  .topbar-row1 { display:flex;align-items:center;gap:12px;padding:12px 0 8px; }
   .back-btn {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--card); border: 1px solid var(--border);
-    color: var(--text2); cursor: pointer; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    transition: var(--transition); flex-shrink: 0;
+    width:38px;height:38px;border-radius:10px;
+    background:var(--card);border:1px solid var(--border);
+    color:var(--text2);cursor:pointer;font-size:18px;
+    display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);flex-shrink:0;
   }
-  .back-btn:hover { color: var(--text); border-color: var(--border2); }
-
+  .back-btn:hover { color:var(--text);border-color:var(--border2); }
   .lesson-title-top {
-    flex: 1; font-size: 0.9rem; font-weight: 700;
-    color: var(--text); line-height: 1.3; overflow: hidden;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    flex:1;font-size:.9rem;font-weight:700;color:var(--text);
+    line-height:1.3;overflow:hidden;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   }
   .complete-btn {
-    padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: transparent; color: var(--text2); font-family: 'Cairo', sans-serif;
-    font-size: 0.78rem; font-weight: 700; cursor: pointer; flex-shrink: 0;
-    transition: var(--transition); white-space: nowrap;
+    padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);
+    background:transparent;color:var(--text2);font-family:'Cairo',sans-serif;
+    font-size:.78rem;font-weight:700;cursor:pointer;flex-shrink:0;
+    transition:var(--transition);white-space:nowrap;
   }
-  .complete-btn.done {
-    border-color: rgba(52,211,153,0.4); color: var(--green);
-    background: rgba(52,211,153,0.08);
-  }
+  .complete-btn.done { border-color:rgba(52,211,153,0.4);color:var(--green);background:rgba(52,211,153,0.08); }
 
-  /* ── TABS ── */
-  .tabs-row {
-    display: flex; gap: 4px; padding-bottom: 12px;
-  }
+  /* tabs */
+  .tabs-row { display:flex;gap:4px;padding-bottom:12px; }
   .tab-btn {
-    flex: 1; padding: 9px 4px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: transparent;
-    font-family: 'Cairo', sans-serif; font-size: 0.8rem; font-weight: 700;
-    color: var(--text3); cursor: pointer; transition: var(--transition);
-    display: flex; align-items: center; justify-content: center; gap: 5px;
+    flex:1;padding:9px 4px;border-radius:10px;
+    border:1.5px solid var(--border);background:transparent;
+    font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:700;
+    color:var(--text3);cursor:pointer;transition:var(--transition);
+    display:flex;align-items:center;justify-content:center;gap:4px;
   }
-  .tab-btn:hover { color: var(--text2); border-color: var(--border2); }
-  .tab-btn.active-tab-gold {
-    background: rgba(245,200,66,0.1); border-color: rgba(245,200,66,0.4);
-    color: var(--gold);
-  }
-  .tab-btn.active-tab-blue {
-    background: rgba(74,158,255,0.1); border-color: rgba(74,158,255,0.4);
-    color: var(--blue);
-  }
-  .tab-btn.active-tab-purple {
-    background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.4);
-    color: var(--purple);
-  }
+  .tab-btn:hover { color:var(--text2);border-color:var(--border2); }
+  .tab-btn.active-tab-gold { background:rgba(245,200,66,0.1);border-color:rgba(245,200,66,0.4);color:var(--gold); }
+  .tab-btn.active-tab-blue { background:rgba(74,158,255,0.1);border-color:rgba(74,158,255,0.4);color:var(--blue); }
+  .tab-btn.active-tab-purple { background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.4);color:var(--purple); }
+  .tab-btn.active-tab-teal { background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.4);color:var(--green); }
 
-  /* ── LESSON CONTENT ── */
-  .lesson-body { max-width: 680px; margin: 0 auto; padding: 20px 16px 80px; }
+  /* panes */
+  .lesson-body { max-width:680px;margin:0 auto;padding:20px 16px 80px; }
+  .tab-pane { display:none;animation:fadeSlide .25s ease; }
+  .tab-pane.active { display:block; }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-  .tab-pane { display: none; animation: fadeSlide 0.25s ease; }
-  .tab-pane.active { display: block; }
-  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ── CONTENT STYLES ── */
-  .content-block { line-height: 1.85; }
-  .content-block h1, .content-block h2, .content-block h3 {
-    font-weight: 800; color: var(--text); margin: 20px 0 10px;
-  }
-  .content-block h1 { font-size: 1.3rem; color: var(--gold); }
-  .content-block h2 { font-size: 1.1rem; border-right: 3px solid var(--blue); padding-right: 10px; }
-  .content-block h3 { font-size: 0.95rem; color: var(--text2); }
-  .content-block p { color: var(--text2); margin-bottom: 10px; font-size: 0.95rem; }
-  .content-block ul, .content-block ol {
-    padding-right: 20px; margin-bottom: 12px;
-  }
-  .content-block li { color: var(--text2); font-size: 0.95rem; margin-bottom: 6px; }
-  .content-block strong { color: var(--text); font-weight: 700; }
-  .content-block table {
-    width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem;
-    border-radius: 10px; overflow: hidden;
-  }
-  .content-block th {
-    background: var(--card2); padding: 10px 12px; text-align: right;
-    color: var(--text); font-weight: 700; border: 1px solid var(--border2);
-  }
-  .content-block td {
-    padding: 9px 12px; border: 1px solid var(--border);
-    color: var(--text2); background: var(--card);
-  }
-  .content-block tr:nth-child(even) td { background: var(--bg3); }
-
-  /* Essence mode special */
+  /* content */
+  .content-block { line-height:1.85; }
+  .content-block h1,.content-block h2,.content-block h3 { font-weight:800;color:var(--text);margin:20px 0 10px; }
+  .content-block h1 { font-size:1.3rem;color:var(--gold); }
+  .content-block h2 { font-size:1.1rem;border-right:3px solid var(--blue);padding-right:10px; }
+  .content-block h3 { font-size:.95rem;color:var(--text2); }
+  .content-block p { color:var(--text2);margin-bottom:10px;font-size:.95rem; }
+  .content-block ul,.content-block ol { padding-right:20px;margin-bottom:12px; }
+  .content-block li { color:var(--text2);font-size:.95rem;margin-bottom:6px; }
+  .content-block strong { color:var(--text);font-weight:700; }
+  .content-block table { width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;border-radius:10px;overflow:hidden; }
+  .content-block th { background:var(--card2);padding:10px 12px;text-align:right;color:var(--text);font-weight:700;border:1px solid var(--border2); }
+  .content-block td { padding:9px 12px;border:1px solid var(--border);color:var(--text2);background:var(--card); }
+  .content-block tr:nth-child(even) td { background:var(--bg3); }
   .essence-chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2);
-    color: var(--gold); font-size: 0.8rem; font-weight: 700;
-    padding: 5px 12px; border-radius: 8px; margin-bottom: 16px;
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);
+    color:var(--gold);font-size:.8rem;font-weight:700;
+    padding:5px 12px;border-radius:8px;margin-bottom:16px;
   }
-  .essence-card {
-    background: var(--card); border: 1px solid rgba(245,200,66,0.15);
-    border-radius: 14px; padding: 18px; margin-bottom: 12px;
-  }
+  .essence-card { background:var(--card);border:1px solid rgba(245,200,66,0.15);border-radius:14px;padding:18px;margin-bottom:12px; }
 
-  /* ── DEFINITIONS HUB ── */
-  .definitions-section {
-    margin-top: 28px; border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-  }
-  .definitions-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px; background: var(--card); cursor: pointer;
-    transition: var(--transition);
-  }
-  .definitions-header:hover { background: var(--card2); }
-  .definitions-header-text { font-size: 0.95rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .defs-toggle { color: var(--text3); transition: var(--transition); }
-  .defs-toggle.open { transform: rotate(180deg); }
-  .definitions-body { display: none; padding: 4px 0; }
-  .definitions-body.open { display: block; }
+  /* definitions */
+  .definitions-section { margin-top:28px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden; }
+  .definitions-header { display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card);cursor:pointer;transition:var(--transition); }
+  .definitions-header:hover { background:var(--card2); }
+  .definitions-header-text { font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px; }
+  .defs-toggle { color:var(--text3);transition:var(--transition); }
+  .defs-toggle.open { transform:rotate(180deg); }
+  .definitions-body { display:none;padding:4px 0; }
+  .definitions-body.open { display:block; }
+  .def-item { border-bottom:1px solid var(--border); }
+  .def-item:last-child { border-bottom:none; }
+  .def-term { display:flex;align-items:center;justify-content:space-between;padding:12px 18px;cursor:pointer;transition:var(--transition); }
+  .def-term:hover { background:var(--bg3); }
+  .def-term-text { font-size:.9rem;font-weight:700;color:var(--blue); }
+  .def-expand-icon { color:var(--text3);font-size:12px;transition:var(--transition); }
+  .def-expand-icon.open { transform:rotate(180deg); }
+  .def-meaning { display:none;padding:0 18px 14px 18px;font-size:.88rem;color:var(--text2);line-height:1.7;border-top:1px solid var(--border); }
+  .def-meaning.open { display:block; }
 
-  .def-item {
-    border-bottom: 1px solid var(--border);
-  }
-  .def-item:last-child { border-bottom: none; }
-  .def-term {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 18px; cursor: pointer; transition: var(--transition);
-  }
-  .def-term:hover { background: var(--bg3); }
-  .def-term-text { font-size: 0.9rem; font-weight: 700; color: var(--blue); }
-  .def-expand-icon { color: var(--text3); font-size: 12px; transition: var(--transition); }
-  .def-expand-icon.open { transform: rotate(180deg); }
-  .def-meaning {
-    display: none; padding: 0 18px 14px 18px;
-    font-size: 0.88rem; color: var(--text2); line-height: 1.7;
-    border-top: 1px solid var(--border);
-  }
-  .def-meaning.open { display: block; }
-
-  /* ── QUIZ ── */
-  .quiz-section { margin-top: 28px; }
-  .quiz-header-card {
-    background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(74,158,255,0.08));
-    border: 1px solid rgba(168,85,247,0.2); border-radius: var(--radius);
-    padding: 20px; margin-bottom: 16px;
-  }
-  .quiz-title { font-size: 1rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .quiz-subtitle { font-size: 0.83rem; color: var(--text2); margin-top: 4px; }
-  .quiz-score-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-  .quiz-score-label { font-size: 0.82rem; color: var(--text2); white-space: nowrap; }
-  .quiz-score-track { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .quiz-score-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 3px; transition: width 0.4s ease; }
-  .quiz-score-num { font-size: 0.82rem; font-weight: 800; color: var(--text); white-space: nowrap; }
-
-  .question-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
-    transition: var(--transition);
-  }
-  .question-card.answered { border-color: var(--border2); }
-  .question-text { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
-  .question-num { display: inline-block; font-size: 0.72rem; font-weight: 800; color: var(--purple); background: rgba(168,85,247,0.1); padding: 2px 7px; border-radius: 5px; margin-bottom: 8px; }
-
-  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  /* quiz */
+  .quiz-section { margin-top:28px; }
+  .quiz-header-card { background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(74,158,255,0.08));border:1px solid rgba(168,85,247,0.2);border-radius:var(--radius);padding:20px;margin-bottom:16px; }
+  .quiz-title { font-size:1rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px; }
+  .quiz-subtitle { font-size:.83rem;color:var(--text2);margin-top:4px; }
+  .quiz-score-bar { display:flex;align-items:center;gap:10px;margin-top:12px; }
+  .quiz-score-label { font-size:.82rem;color:var(--text2);white-space:nowrap; }
+  .quiz-score-track { flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden; }
+  .quiz-score-fill { height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:3px;transition:width .4s ease; }
+  .quiz-score-num { font-size:.82rem;font-weight:800;color:var(--text);white-space:nowrap; }
+  .question-card { background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;transition:var(--transition); }
+  .question-card.answered { border-color:var(--border2); }
+  .question-text { font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.5; }
+  .question-num { display:inline-block;font-size:.72rem;font-weight:800;color:var(--purple);background:rgba(168,85,247,0.1);padding:2px 7px;border-radius:5px;margin-bottom:8px; }
+  .options-list { display:flex;flex-direction:column;gap:8px; }
   .option-btn {
-    width: 100%; padding: 11px 14px; border-radius: 10px;
-    border: 1.5px solid var(--border); background: var(--bg2);
-    color: var(--text2); font-family: 'Cairo', sans-serif;
-    font-size: 0.88rem; font-weight: 600; text-align: right;
-    cursor: pointer; transition: var(--transition); position: relative; overflow: hidden;
+    width:100%;padding:11px 14px;border-radius:10px;
+    border:1.5px solid var(--border);background:var(--bg2);
+    color:var(--text2);font-family:'Cairo',sans-serif;
+    font-size:.88rem;font-weight:600;text-align:right;
+    cursor:pointer;transition:var(--transition);position:relative;overflow:hidden;
   }
-  .option-btn:hover:not(:disabled) { border-color: rgba(168,85,247,0.4); color: var(--text); background: var(--card); }
-  .option-btn:disabled { cursor: default; }
-  .option-btn.correct { border-color: var(--green) !important; background: rgba(52,211,153,0.08) !important; color: var(--green) !important; }
-  .option-btn.wrong { border-color: var(--red) !important; background: rgba(248,113,113,0.08) !important; color: var(--red) !important; }
+  .option-btn:hover:not(:disabled) { border-color:rgba(168,85,247,0.4);color:var(--text);background:var(--card); }
+  .option-btn:disabled { cursor:default; }
+  .option-btn.correct { border-color:var(--green)!important;background:rgba(52,211,153,0.08)!important;color:var(--green)!important; }
+  .option-btn.wrong { border-color:var(--red)!important;background:rgba(248,113,113,0.08)!important;color:var(--red)!important; }
+  .answer-feedback { margin-top:10px;padding:9px 12px;border-radius:8px;font-size:.83rem;font-weight:600;display:none; }
+  .feedback-correct { background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2); }
+  .feedback-wrong { background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2); }
+  .quiz-result-card { background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;text-align:center;display:none;margin-top:16px; }
+  .result-emoji { font-size:48px;margin-bottom:12px; }
+  .result-title { font-size:1.2rem;font-weight:900;color:var(--text); }
+  .result-score { font-size:2.5rem;font-weight:900;margin:8px 0; }
+  .result-msg { font-size:.88rem;color:var(--text2);margin-bottom:16px; }
+  .retry-btn { padding:10px 24px;border-radius:10px;border:1.5px solid var(--purple);background:rgba(168,85,247,0.1);color:var(--purple);font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:var(--transition); }
+  .retry-btn:hover { background:rgba(168,85,247,0.2); }
 
-  .answer-feedback {
-    margin-top: 10px; padding: 9px 12px; border-radius: 8px;
-    font-size: 0.83rem; font-weight: 600; display: none;
+  /* ══════ FLASHCARDS ══════ */
+  .fc-section { padding-bottom:20px; }
+
+  .fc-header {
+    background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(74,158,255,0.06));
+    border:1px solid rgba(52,211,153,0.2);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:20px;
   }
-  .feedback-correct { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
-  .feedback-wrong { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
-
-  .quiz-result-card {
-    background: var(--card); border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 24px; text-align: center;
-    display: none; margin-top: 16px;
+  .fc-header-title { font-size:1rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px; }
+  .fc-header-sub { font-size:.82rem;color:var(--text2);margin-top:3px; }
+  .fc-meta { display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:8px; }
+  .fc-counter { font-size:.85rem;font-weight:700;color:var(--text2); }
+  .fc-counter span { color:var(--green);font-size:1rem; }
+  .fc-shuffle-btn {
+    padding:6px 14px;border-radius:8px;border:1.5px solid rgba(52,211,153,0.3);
+    background:rgba(52,211,153,0.08);color:var(--green);
+    font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;
+    cursor:pointer;transition:var(--transition);
   }
-  .result-emoji { font-size: 48px; margin-bottom: 12px; }
-  .result-title { font-size: 1.2rem; font-weight: 900; color: var(--text); }
-  .result-score { font-size: 2.5rem; font-weight: 900; margin: 8px 0; }
-  .result-msg { font-size: 0.88rem; color: var(--text2); margin-bottom: 16px; }
-  .retry-btn {
-    padding: 10px 24px; border-radius: 10px; border: 1.5px solid var(--purple);
-    background: rgba(168,85,247,0.1); color: var(--purple);
-    font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 700;
-    cursor: pointer; transition: var(--transition);
+  .fc-shuffle-btn:hover { background:rgba(52,211,153,0.16); }
+
+  /* Card scene */
+  .fc-scene {
+    width:100%;perspective:1200px;
+    margin-bottom:20px;cursor:pointer;
+    user-select:none;
   }
-  .retry-btn:hover { background: rgba(168,85,247,0.2); }
-
-  /* ── SECTION CARDS ── */
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    margin: 24px 0 14px;
+  .fc-inner {
+    position:relative;width:100%;
+    min-height:220px;
+    transform-style:preserve-3d;
+    transition:transform .55s cubic-bezier(.4,.2,.2,1);
+    border-radius:20px;
   }
-  .section-icon { font-size: 18px; }
-  .section-title { font-size: 1rem; font-weight: 800; color: var(--text); }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .fc-inner.flipped { transform:rotateY(180deg); }
 
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center; padding: 48px 20px; color: var(--text3);
+  .fc-face {
+    position:absolute;inset:0;
+    border-radius:20px;backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:28px 24px;text-align:center;
+    box-shadow:var(--shadow-lg);
   }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-text { font-size: 0.9rem; }
+  .fc-front {
+    background:var(--fc-front);
+    border:1.5px solid rgba(52,211,153,0.25);
+  }
+  .fc-back {
+    background:var(--fc-back);
+    border:1.5px solid rgba(74,158,255,0.3);
+    transform:rotateY(180deg);
+  }
+  .fc-face-label {
+    font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+    padding:3px 10px;border-radius:6px;margin-bottom:16px;
+    opacity:.8;
+  }
+  .fc-front .fc-face-label { background:rgba(52,211,153,0.12);color:var(--green); }
+  .fc-back .fc-face-label { background:rgba(74,158,255,0.12);color:var(--blue); }
 
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .fc-term {
+    font-size:clamp(1.2rem,4vw,1.6rem);font-weight:900;
+    color:var(--text);line-height:1.3;
+  }
+  .fc-hint {
+    font-size:.78rem;color:var(--text3);margin-top:12px;
+    display:flex;align-items:center;gap:4px;
+  }
+  .fc-meaning {
+    font-size:clamp(.88rem,2.5vw,1rem);color:var(--text2);
+    line-height:1.75;font-weight:500;
+  }
 
-  /* ── TOAST ── */
+  /* progress dots */
+  .fc-dots {
+    display:flex;justify-content:center;gap:6px;
+    flex-wrap:wrap;margin-bottom:16px;
+  }
+  .fc-dot {
+    width:8px;height:8px;border-radius:50%;
+    background:var(--border2);transition:var(--transition);flex-shrink:0;
+  }
+  .fc-dot.active { background:var(--green);transform:scale(1.3); }
+  .fc-dot.seen { background:var(--blue);opacity:.6; }
+
+  /* nav controls */
+  .fc-controls {
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    margin-bottom:20px;
+  }
+  .fc-nav-btn {
+    width:48px;height:48px;border-radius:14px;
+    border:1.5px solid var(--border);background:var(--card);
+    color:var(--text2);font-size:20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);flex-shrink:0;
+  }
+  .fc-nav-btn:hover { color:var(--text);border-color:var(--border2);background:var(--card2); }
+  .fc-nav-btn:disabled { opacity:.3;cursor:default; }
+  .fc-flip-btn {
+    flex:1;max-width:180px;padding:12px 20px;border-radius:14px;
+    border:1.5px solid rgba(52,211,153,0.35);
+    background:rgba(52,211,153,0.1);color:var(--green);
+    font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:800;
+    cursor:pointer;transition:var(--transition);
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .fc-flip-btn:hover { background:rgba(52,211,153,0.18); }
+
+  /* swipe hint */
+  .fc-swipe-hint {
+    text-align:center;font-size:.75rem;color:var(--text3);
+    padding:8px;display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+
+  /* mini cards strip for all cards preview */
+  .fc-all-strip {
+    margin-top:24px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  }
+  .fc-strip-header {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;background:var(--card);cursor:pointer;transition:var(--transition);
+  }
+  .fc-strip-header:hover { background:var(--card2); }
+  .fc-strip-title { font-size:.88rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px; }
+  .fc-strip-toggle { color:var(--text3);transition:var(--transition); }
+  .fc-strip-toggle.open { transform:rotate(180deg); }
+  .fc-strip-body { display:none; }
+  .fc-strip-body.open { display:block; }
+  .fc-mini-list { padding:8px; display:flex;flex-direction:column;gap:6px; }
+  .fc-mini-item {
+    display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:var(--bg2);border-radius:10px;cursor:pointer;
+    transition:var(--transition);border:1px solid transparent;
+  }
+  .fc-mini-item:hover { background:var(--bg3);border-color:var(--border2); }
+  .fc-mini-num { width:24px;height:24px;border-radius:7px;background:rgba(52,211,153,0.1);color:var(--green);font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .fc-mini-term { font-size:.88rem;font-weight:700;color:var(--text);flex:1; }
+  .fc-mini-arrow { color:var(--text3);font-size:12px; }
+
+  /* empty */
+  .empty-state { text-align:center;padding:48px 20px;color:var(--text3); }
+  .empty-icon { font-size:40px;margin-bottom:12px; }
+  .empty-text { font-size:.9rem; }
+
+  /* toast */
   #toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
-    background: var(--card2); border: 1px solid var(--border2); color: var(--text);
-    padding: 10px 20px; border-radius: 12px; font-size: 0.88rem; font-weight: 600;
-    z-index: 9999; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    white-space: nowrap; box-shadow: var(--shadow);
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--card2);border:1px solid var(--border2);color:var(--text);
+    padding:10px 20px;border-radius:12px;font-size:.88rem;font-weight:600;
+    z-index:9999;transition:transform .3s cubic-bezier(.4,0,.2,1);
+    white-space:nowrap;box-shadow:var(--shadow);
   }
-  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.show { transform:translateX(-50%) translateY(0); }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 400px) {
-    .tab-btn { font-size: 0.72rem; padding: 8px 2px; }
-    .card-title { font-size: 0.92rem; }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border2);border-radius:2px; }
+
+  @media(max-width:400px){
+    .tab-btn{font-size:.68rem;padding:8px 2px;}
+    .card-title{font-size:.92rem;}
+    .fc-inner{min-height:200px;}
   }
-  @media (min-width: 600px) {
-    .home-header { padding: 64px 20px 48px; }
-    .cards-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (min-width: 900px) {
-    .cards-grid { grid-template-columns: 1fr 1fr; }
+  @media(min-width:600px){
+    .home-header{padding:64px 20px 48px;}
+    .cards-grid{grid-template-columns:1fr 1fr;}
+    .fc-inner{min-height:240px;}
   }
 </style>
 </head>
@@ -444,30 +465,27 @@
 
 <div id="scroll-progress"><div id="scroll-progress-bar"></div></div>
 <div id="toast"></div>
+<button id="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">🌙</button>
 
-<!-- ══════════════════════ HOME ══════════════════════ -->
+<!-- HOME -->
 <div id="home" class="view active">
   <div class="home-header">
     <div class="home-header-inner">
       <div class="app-logo">🧠</div>
       <div class="app-title">خلاصة الجغرافيا</div>
       <div class="app-subtitle">مراجعة سريعة · فهم عميق · نتائج حقيقية</div>
-      <div class="progress-badge" id="global-progress-badge">
-        <span>✦</span><span id="progress-text">0 دروس مكتملة</span>
-      </div>
+      <div class="progress-badge"><span>✦</span><span id="progress-text">0 دروس مكتملة</span></div>
     </div>
   </div>
-
   <div class="subject-tabs">
     <button class="subject-tab active geo ripple-container" onclick="filterSubject('all')" id="tab-all">📚 الكل</button>
     <button class="subject-tab geo ripple-container" onclick="filterSubject('geography')" id="tab-geo">📍 الجغرافيا</button>
     <button class="subject-tab hist ripple-container" onclick="filterSubject('history')" id="tab-hist">📜 التاريخ</button>
   </div>
-
   <div class="cards-grid" id="cards-grid"></div>
 </div>
 
-<!-- ══════════════════════ LESSON ══════════════════════ -->
+<!-- LESSON -->
 <div id="lesson" class="view">
   <div class="lesson-topbar">
     <div class="lesson-topbar-inner">
@@ -480,416 +498,230 @@
         <button class="tab-btn active-tab-gold ripple-container" id="tab-essence" onclick="switchTab('essence')">⚡ الخلاصة</button>
         <button class="tab-btn ripple-container" id="tab-structured" onclick="switchTab('structured')">🔵 الفهم</button>
         <button class="tab-btn ripple-container" id="tab-full" onclick="switchTab('full')">🟣 الكامل</button>
+        <button class="tab-btn ripple-container" id="tab-flashcards" onclick="switchTab('flashcards')">🃏 بطاقات</button>
         <button class="tab-btn ripple-container" id="tab-quiz" onclick="switchTab('quiz')">🧩 اختبار</button>
       </div>
     </div>
   </div>
-
   <div class="lesson-body">
     <div class="tab-pane active" id="pane-essence"></div>
     <div class="tab-pane" id="pane-structured"></div>
     <div class="tab-pane" id="pane-full"></div>
+    <div class="tab-pane" id="pane-flashcards"></div>
     <div class="tab-pane" id="pane-quiz"></div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
+// ══════════════════════ THEME ══════════════════════
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+  try { localStorage.setItem('essengeo_theme', isDark ? 'dark' : 'light'); } catch{}
+}
+(function() {
+  try {
+    const t = localStorage.getItem('essengeo_theme');
+    if (t === 'light') { isDark = false; document.body.classList.add('light'); document.getElementById('theme-toggle').textContent = '☀️'; }
+  } catch{}
+})();
+
+// ══════════════════════ DATA ══════════════════════
 const lessons = {
   geography: {
     lesson1: {
       id: 'geography-lesson1',
       title: 'تقنيات رسم خرائط المجال الريفي والحضري',
-      subject: 'geography',
-      num: 1,
-      essence: `
-<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
-<div class="essence-card content-block">
-<ul>
+      subject: 'geography', num: 1,
+      essence: `<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
+<div class="essence-card content-block"><ul>
 <li><strong>الخريطة</strong> = تمثيل مصغر لسطح الأرض</li>
 <li><strong>مكونات الخريطة:</strong> عنوان + مقياس + اتجاه + مفتاح</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>نوعان من الخرائط:</strong>
-<ul>
+</ul></div>
+<div class="essence-card content-block"><strong>نوعان من الخرائط:</strong><ul>
 <li>🗺️ <strong>طبوغرافية</strong> = شاملة (طبيعة + بشر + طرق)</li>
 <li>🎯 <strong>موضوعاتية</strong> = موضوع واحد أو أكثر (سكان / مناخ / اقتصاد)</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>الرموز الخريطية — 3 أنواع:</strong>
-<ul>
+</ul></div>
+<div class="essence-card content-block"><strong>الرموز الخريطية — 3 أنواع:</strong><ul>
 <li>📍 <strong>موضعية</strong> = نقاط (مدن، معادن)</li>
 <li>➡️ <strong>خطية</strong> = خطوط (أنهار، طرق، حدود)</li>
 <li>🟩 <strong>مساحية</strong> = مساحات (غابات، فلاحة، كثافة)</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>خطوات رسم الخريطة (7 خطوات):</strong>
-<ol>
-<li>تقسيم الشبكة (مربعات)</li>
-<li>نقل الإطار</li>
-<li>رسم خريطة صماء</li>
-<li>توطين المعطيات</li>
-<li>وضع الرموز</li>
-<li>إنجاز المفتاح</li>
+</ul></div>
+<div class="essence-card content-block"><strong>خطوات رسم الخريطة (7 خطوات):</strong><ol>
+<li>تقسيم الشبكة (مربعات)</li><li>نقل الإطار</li><li>رسم خريطة صماء</li>
+<li>توطين المعطيات</li><li>وضع الرموز</li><li>إنجاز المفتاح</li>
 <li>إضافة (عنوان + مقياس + شمال + مصدر)</li>
-</ol>
-</div>`,
-      structured: `
-<div class="content-block">
-<h1>🗺️ ما هي الخريطة؟</h1>
-<p>هي تمثيل مصغر لسطح الأرض يساعد على فهم المجال الجغرافي (ريفي أو حضري).</p>
-
-<h2>🧩 مكونات الخريطة</h2>
-<ul>
+</ol></div>`,
+      structured: `<div class="content-block">
+<h1>🗺️ ما هي الخريطة؟</h1><p>هي تمثيل مصغر لسطح الأرض يساعد على فهم المجال الجغرافي (ريفي أو حضري).</p>
+<h2>🧩 مكونات الخريطة</h2><ul>
 <li><strong>العنوان:</strong> يحدد موضوع الخريطة</li>
 <li><strong>المقياس:</strong> يربط بين الواقع والخريطة</li>
 <li><strong>اتجاه الشمال:</strong> لتحديد الجهات</li>
 <li><strong>المفتاح:</strong> تفسير الرموز</li>
 </ul>
-
 <h2>🌍 أنواع الخرائط</h2>
-<h3>1. الخريطة الطبوغرافية</h3>
-<ul>
+<h3>1. الخريطة الطبوغرافية</h3><ul>
 <li>تمثل جميع العناصر: التضاريس، المدن، الطرق، الأنهار</li>
-<li>دقيقة ومفصلة</li>
-</ul>
-<h3>2. الخريطة الموضوعاتية</h3>
-<ul>
+<li>دقيقة ومفصلة</li></ul>
+<h3>2. الخريطة الموضوعاتية</h3><ul>
 <li>تركز على موضوع معين: السكان، المناخ، الاقتصاد</li>
-<li>قد تكون تركيبية (تجمع عدة ظواهر)</li>
-</ul>
-
+<li>قد تكون تركيبية (تجمع عدة ظواهر)</li></ul>
 <h2>🔣 الرموز الخريطية</h2>
-<table>
-<thead><tr><th>النوع</th><th>ماذا يمثل</th><th>مثال</th></tr></thead>
-<tbody>
-<tr><td>موضعية</td><td>نقطة</td><td>مدينة / مطار</td></tr>
+<table><thead><tr><th>النوع</th><th>ماذا يمثل</th><th>مثال</th></tr></thead>
+<tbody><tr><td>موضعية</td><td>نقطة</td><td>مدينة / مطار</td></tr>
 <tr><td>خطية</td><td>خط</td><td>نهر / طريق</td></tr>
-<tr><td>مساحية</td><td>مساحة</td><td>غابة / فلاحة</td></tr>
-</tbody>
-</table>
-
-<h2>🛠️ خطوات إنجاز خريطة</h2>
-<ol>
-<li>تقسيم الخريطة إلى مربعات</li>
-<li>نقل الشكل إلى الدفتر</li>
-<li>رسم خريطة فارغة</li>
-<li>إضافة العناصر الجغرافية</li>
-<li>استعمال الرموز المناسبة</li>
-<li>إنشاء المفتاح</li>
-<li>إضافة البيانات الأساسية</li>
-</ol>
-</div>`,
-      full: `
-<div class="content-block">
+<tr><td>مساحية</td><td>مساحة</td><td>غابة / فلاحة</td></tr></tbody></table>
+<h2>🛠️ خطوات إنجاز خريطة</h2><ol>
+<li>تقسيم الخريطة إلى مربعات</li><li>نقل الشكل إلى الدفتر</li>
+<li>رسم خريطة فارغة</li><li>إضافة العناصر الجغرافية</li>
+<li>استعمال الرموز المناسبة</li><li>إنشاء المفتاح</li>
+<li>إضافة البيانات الأساسية</li></ol></div>`,
+      full: `<div class="content-block">
 <h1>🧭 1. تقديم مفهوم الخريطة</h1>
 <p>الخريطة هي أداة جغرافية أساسية تمثل سطح الأرض بشكل مصغر وتستخدم في: التوجيه، التخطيط، وتحليل الظواهر الطبيعية والبشرية.</p>
-
 <h2>🧱 2. مكونات الخريطة بالتفصيل</h2>
-<h3>📌 العنوان</h3>
-<p>يوضع أعلى الخريطة ويشرح موضوعها.</p>
-<h3>📏 المقياس</h3>
-<ul>
-<li>يحدد العلاقة بين المسافة على الخريطة والواقع</li>
-<li>مثال: 1/100000</li>
-</ul>
-<h3>🧭 الاتجاه</h3>
-<ul>
-<li>غالبًا سهم يشير إلى الشمال</li>
-<li>يساعد على تحديد باقي الجهات</li>
-</ul>
-<h3>🗝️ المفتاح</h3>
-<ul>
-<li>يفسر الرموز والألوان</li>
-<li>ضروري لفهم الخريطة</li>
-</ul>
-
+<h3>📌 العنوان</h3><p>يوضع أعلى الخريطة ويشرح موضوعها.</p>
+<h3>📏 المقياس</h3><ul><li>يحدد العلاقة بين المسافة على الخريطة والواقع</li><li>مثال: 1/100000</li></ul>
+<h3>🧭 الاتجاه</h3><ul><li>غالبًا سهم يشير إلى الشمال</li><li>يساعد على تحديد باقي الجهات</li></ul>
+<h3>🗝️ المفتاح</h3><ul><li>يفسر الرموز والألوان</li><li>ضروري لفهم الخريطة</li></ul>
 <h2>🌐 3. أنواع الخرائط</h2>
-<h3>🟢 الطبوغرافية</h3>
-<p>دقيقة ومفصلة. تشمل: التضاريس، الأنهار، المدن، الطرق.</p>
-<h3>🔵 الموضوعاتية</h3>
-<p>تركز على ظاهرة واحدة أو أكثر: طبيعية، بشرية، اقتصادية، سياسية. قد تكون تركيبية (تجمع عدة ظواهر).</p>
-
+<h3>🟢 الطبوغرافية</h3><p>دقيقة ومفصلة. تشمل: التضاريس، الأنهار، المدن، الطرق.</p>
+<h3>🔵 الموضوعاتية</h3><p>تركز على ظاهرة واحدة أو أكثر: طبيعية، بشرية، اقتصادية، سياسية. قد تكون تركيبية.</p>
 <h2>🔣 4. التعبير الخريطي (الرموز)</h2>
-<h3>🟡 رموز الموضع</h3>
-<p>توضع في موقعها الحقيقي. مثل: المدن، المعادن، المطارات.</p>
-<h3>🔵 الرموز الخطية</h3>
-<p>تمثل الظواهر الممتدة: الأنهار، الطرق، الحدود. تشمل أيضًا خطوط التساوي (حرارة / ارتفاع).</p>
-<h3>🟣 الرموز المساحية</h3>
-<p>تغطي مساحة. مثل: الغابات، الزراعة، الكثافة السكانية.</p>
-
+<h3>🟡 رموز الموضع</h3><p>توضع في موقعها الحقيقي. مثل: المدن، المعادن، المطارات.</p>
+<h3>🔵 الرموز الخطية</h3><p>تمثل الظواهر الممتدة: الأنهار، الطرق، الحدود. تشمل خطوط التساوي.</p>
+<h3>🟣 الرموز المساحية</h3><p>تغطي مساحة. مثل: الغابات، الزراعة، الكثافة السكانية.</p>
 <h2>🛠️ 5. خطوات إنجاز خريطة (ريفي / حضري)</h2>
-<h3>المرحلة 1: الإعداد</h3>
-<ul>
-<li>تقسيم الإطار إلى مربعات (1 أو 2 سم)</li>
-<li>ترقيمها</li>
-</ul>
-<h3>المرحلة 2: النقل</h3>
-<p>إعادة رسم الإطار على الدفتر.</p>
-<h3>المرحلة 3: الرسم الأساسي</h3>
-<p>رسم خريطة صماء (فارغة).</p>
-<h3>المرحلة 4: التوطين</h3>
-<ul><li>وضع: أنهار، مدن، حدود</li></ul>
-<h3>المرحلة 5: الرموز</h3>
-<p>اختيار رموز مناسبة حسب الموضوع.</p>
-<h3>المرحلة 6: المفتاح</h3>
-<p>شرح كل رمز.</p>
-<h3>المرحلة 7: الإخراج النهائي</h3>
-<ul>
-<li>عنوان</li><li>مقياس</li><li>سهم الشمال</li><li>مصدر الخريطة</li>
-</ul>
-</div>`,
+<h3>المرحلة 1: الإعداد</h3><ul><li>تقسيم الإطار إلى مربعات (1 أو 2 سم)</li><li>ترقيمها</li></ul>
+<h3>المرحلة 2: النقل</h3><p>إعادة رسم الإطار على الدفتر.</p>
+<h3>المرحلة 3: الرسم الأساسي</h3><p>رسم خريطة صماء (فارغة).</p>
+<h3>المرحلة 4: التوطين</h3><ul><li>وضع: أنهار، مدن، حدود</li></ul>
+<h3>المرحلة 5: الرموز</h3><p>اختيار رموز مناسبة حسب الموضوع.</p>
+<h3>المرحلة 6: المفتاح</h3><p>شرح كل رمز.</p>
+<h3>المرحلة 7: الإخراج النهائي</h3><ul>
+<li>عنوان</li><li>مقياس</li><li>سهم الشمال</li><li>مصدر الخريطة</li></ul></div>`,
       definitions: [
         { term: 'الخريطة', meaning: 'تمثيل مصغر لسطح الأرض بنسبة معينة، يستخدم رموزًا وألوانًا لتمثيل الظواهر الجغرافية.' },
-        { term: 'المقياس', meaning: 'النسبة بين المسافة على الخريطة والمسافة الحقيقية على الأرض. مثال: 1/100,000 يعني 1 سم على الخريطة = 1 كم على الأرض.' },
-        { term: 'الخريطة الطبوغرافية', meaning: 'خريطة تمثل جميع العناصر الطبيعية والبشرية بدقة عالية، تشمل التضاريس والطرق والمدن والأنهار.' },
+        { term: 'المقياس', meaning: 'النسبة بين المسافة على الخريطة والمسافة الحقيقية على الأرض. مثال: 1/100,000 يعني 1 سم = 1 كم.' },
+        { term: 'الخريطة الطبوغرافية', meaning: 'خريطة تمثل جميع العناصر الطبيعية والبشرية بدقة عالية، تشمل التضاريس والطرق والمدن.' },
         { term: 'الخريطة الموضوعاتية', meaning: 'خريطة تركز على ظاهرة واحدة أو أكثر كالمناخ أو السكان أو الاقتصاد.' },
-        { term: 'الرموز المساحية', meaning: 'رموز تغطي مساحة على الخريطة تمثل ظواهر تمتد على رقعة معينة كالغابات أو الأراضي الزراعية.' },
+        { term: 'الرموز المساحية', meaning: 'رموز تغطي مساحة على الخريطة تمثل ظواهر كالغابات أو الأراضي الزراعية.' },
+        { term: 'المفتاح', meaning: 'دليل الخريطة، يشرح معنى كل رمز ولون مستخدم فيها.' },
+        { term: 'الخريطة الصماء', meaning: 'خريطة فارغة تحتوي على الإطار فقط، تستخدم كأساس للرسم والتوطين.' },
       ],
       quiz: [
-        {
-          q: 'ما هي الأداة التي تمثل سطح الأرض بشكل مصغر؟',
-          options: ['الصورة الجوية', 'الخريطة', 'الرسم البياني', 'الجدول'],
-          answer: 1,
-          feedback: 'الخريطة هي تمثيل مصغر لسطح الأرض باستخدام رموز ومقياس محدد.'
-        },
-        {
-          q: 'كم عدد خطوات إنجاز الخريطة؟',
-          options: ['5 خطوات', '6 خطوات', '7 خطوات', '4 خطوات'],
-          answer: 2,
-          feedback: 'تتكون عملية رسم الخريطة من 7 خطوات تبدأ من تقسيم الشبكة وتنتهي بإضافة العنوان والمصدر.'
-        },
-        {
-          q: 'ما نوع الرمز الذي يمثل الأنهار والطرق؟',
-          options: ['رموز موضعية', 'رموز مساحية', 'رموز خطية', 'رموز لونية'],
-          answer: 2,
-          feedback: 'الرموز الخطية تمثل الظواهر الممتدة مثل الأنهار والطرق والحدود.'
-        },
-        {
-          q: 'الخريطة التي تمثل جميع العناصر الطبيعية والبشرية تسمى:',
-          options: ['موضوعاتية', 'طبوغرافية', 'مناخية', 'سكانية'],
-          answer: 1,
-          feedback: 'الخريطة الطبوغرافية هي الأشمل، تتضمن التضاريس والطرق والمدن والأنهار وغيرها.'
-        },
-        {
-          q: 'ما العنصر الأساسي في الخريطة الذي يفسر الرموز والألوان؟',
-          options: ['العنوان', 'المقياس', 'المفتاح', 'الشمال'],
-          answer: 2,
-          feedback: 'المفتاح هو دليل الخريطة، يشرح معنى كل رمز ولون مستخدم فيها.'
-        }
+        { q: 'ما هي الأداة التي تمثل سطح الأرض بشكل مصغر؟', options: ['الصورة الجوية','الخريطة','الرسم البياني','الجدول'], answer: 1, feedback: 'الخريطة هي تمثيل مصغر لسطح الأرض باستخدام رموز ومقياس محدد.' },
+        { q: 'كم عدد خطوات إنجاز الخريطة؟', options: ['5 خطوات','6 خطوات','7 خطوات','4 خطوات'], answer: 2, feedback: 'تتكون عملية رسم الخريطة من 7 خطوات تبدأ من تقسيم الشبكة وتنتهي بإضافة العنوان والمصدر.' },
+        { q: 'ما نوع الرمز الذي يمثل الأنهار والطرق؟', options: ['رموز موضعية','رموز مساحية','رموز خطية','رموز لونية'], answer: 2, feedback: 'الرموز الخطية تمثل الظواهر الممتدة مثل الأنهار والطرق والحدود.' },
+        { q: 'الخريطة التي تمثل جميع العناصر الطبيعية والبشرية تسمى:', options: ['موضوعاتية','طبوغرافية','مناخية','سكانية'], answer: 1, feedback: 'الخريطة الطبوغرافية هي الأشمل، تتضمن التضاريس والطرق والمدن والأنهار.' },
+        { q: 'ما العنصر الأساسي في الخريطة الذي يفسر الرموز والألوان؟', options: ['العنوان','المقياس','المفتاح','الشمال'], answer: 2, feedback: 'المفتاح هو دليل الخريطة، يشرح معنى كل رمز ولون مستخدم فيها.' }
       ]
     },
     lesson2: {
       id: 'geography-lesson2',
       title: 'المنظومة البيئية',
-      subject: 'geography',
-      num: 2,
-      essence: `
-<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
-<div class="essence-card content-block">
-<ul>
+      subject: 'geography', num: 2,
+      essence: `<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
+<div class="essence-card content-block"><ul>
 <li><strong>المنظومة البيئية</strong> = تفاعل بين عناصر حية وغير حية</li>
+</ul></div>
+<div class="essence-card content-block"><strong>المكونات غير الحية:</strong><ul>
+<li>الغلاف الجوي</li><li>الغلاف الصخري</li><li>الغلاف المائي</li>
 </ul>
-</div>
-<div class="essence-card content-block">
-<strong>المكونات غير الحية (Abiotic):</strong>
-<ul>
-<li>الغلاف الجوي</li>
-<li>الغلاف الصخري</li>
-<li>الغلاف المائي</li>
-</ul>
-<strong>المكونات الحية (Biotic):</strong>
-<ul>
+<strong>المكونات الحية:</strong><ul>
 <li>🌿 <strong>منتجات</strong> = نباتات (تصنع الغذاء)</li>
 <li>🐻 <strong>مستهلكات</strong> = حيوانات + إنسان</li>
 <li>🪱 <strong>محللات</strong> = تحلل المواد العضوية</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>توازن المنظومة يعتمد على:</strong>
-<ul>
+</ul></div>
+<div class="essence-card content-block"><strong>توازن المنظومة:</strong><ul>
 <li>تدفق الطاقة: شمس → نباتات → حيوانات</li>
-<li>دورة الماء</li>
-<li>دورة الكربون</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>أنواع المنظومات حسب النطاق:</strong>
-<ul>
-<li>🔥 <strong>حار:</strong> استوائي / مداري / صحراوي</li>
-<li>🌤️ <strong>معتدل:</strong> متوسطي / محيطي / قاري</li>
-<li>🧊 <strong>بارد:</strong> تايغا / توندرا / جبلي</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>⚠️ الإنسان يخل بالتوازن عبر:</strong>
-<ul>
-<li>التلوث الصناعي</li>
-<li>إزالة الغابات</li>
-<li>استهلاك الماء بشكل مفرط</li>
-</ul>
-</div>`,
-      structured: `
-<div class="content-block">
+<li>دورة الماء</li><li>دورة الكربون</li>
+</ul></div>
+<div class="essence-card content-block"><strong>أنواع المنظومات:</strong><ul>
+<li>🔥 حار: استوائي / مداري / صحراوي</li>
+<li>🌤️ معتدل: متوسطي / محيطي / قاري</li>
+<li>🧊 بارد: تايغا / توندرا / جبلي</li>
+</ul></div>
+<div class="essence-card content-block"><strong>⚠️ الإنسان يخل بالتوازن عبر:</strong><ul>
+<li>التلوث الصناعي</li><li>إزالة الغابات</li><li>استهلاك الماء المفرط</li>
+</ul></div>`,
+      structured: `<div class="content-block">
 <h1>🌱 ما هي المنظومة البيئية؟</h1>
 <p>نظام مترابط بين الكائنات الحية والوسط الطبيعي. أي تغيير في عنصر يؤثر على الباقي.</p>
-
-<h2>🧱 المكونات غير الحية</h2>
-<ul>
+<h2>🧱 المكونات غير الحية</h2><ul>
 <li><strong>الغلاف الجوي:</strong> هواء + حماية من الأشعة</li>
 <li><strong>الغلاف الصخري:</strong> التربة والقشرة الأرضية</li>
-<li><strong>الغلاف المائي:</strong> محيطات + مياه عذبة</li>
-</ul>
-
+<li><strong>الغلاف المائي:</strong> محيطات + مياه عذبة</li></ul>
 <h2>🐾 المكونات الحية</h2>
-<h3>🌿 المنتجات</h3>
-<p>نباتات تصنع الغذاء عبر الضوء (التركيب الضوئي). مصدر الطاقة الأساسي.</p>
-<h3>🐻 المستهلكات</h3>
-<p>حيوانات وإنسان. تعتمد على غيرها في الغذاء.</p>
-<h3>🪱 المحللات</h3>
-<p>تفكك المواد العضوية وتعيد تدويرها في الطبيعة.</p>
-
+<h3>🌿 المنتجات</h3><p>نباتات تصنع الغذاء عبر التركيب الضوئي. مصدر الطاقة الأساسي.</p>
+<h3>🐻 المستهلكات</h3><p>حيوانات وإنسان. تعتمد على غيرها في الغذاء.</p>
+<h3>🪱 المحللات</h3><p>تفكك المواد العضوية وتعيد تدويرها في الطبيعة.</p>
 <h2>⚖️ كيف يبقى التوازن؟</h2>
-<h3>☀️ تدفق الطاقة</h3>
-<p>الشمس ← نباتات ← حيوانات ← تحلل</p>
-<h3>💧 دورة الماء</h3>
-<p>تبخر ← سحب ← مطر ← جريان ← تسرب</p>
-<h3>🧪 دورة الكربون</h3>
-<ul>
+<h3>☀️ تدفق الطاقة</h3><p>الشمس ← نباتات ← حيوانات ← تحلل</p>
+<h3>💧 دورة الماء</h3><p>تبخر ← سحب ← مطر ← جريان ← تسرب</p>
+<h3>🧪 دورة الكربون</h3><ul>
 <li>CO₂ يدخل عبر النباتات</li>
-<li>يعود عبر التنفس والتحلل والبراكين</li>
-</ul>
-
+<li>يعود عبر التنفس والتحلل والبراكين</li></ul>
 <h2>🌎 أنواع المنظومات</h2>
-<table>
-<thead><tr><th>النطاق</th><th>الأنظمة</th></tr></thead>
-<tbody>
-<tr><td>🔥 الحار</td><td>استوائي / مداري / صحراوي</td></tr>
+<table><thead><tr><th>النطاق</th><th>الأنظمة</th></tr></thead>
+<tbody><tr><td>🔥 الحار</td><td>استوائي / مداري / صحراوي</td></tr>
 <tr><td>🌤️ المعتدل</td><td>متوسطي / محيطي / قاري</td></tr>
-<tr><td>🧊 البارد</td><td>تايغا / توندرا / جبلي</td></tr>
-</tbody>
-</table>
-
-<h2>⚠️ دور الإنسان</h2>
-<ul>
+<tr><td>🧊 البارد</td><td>تايغا / توندرا / جبلي</td></tr></tbody></table>
+<h2>⚠️ دور الإنسان</h2><ul>
 <li>يستهلك الموارد ويلوث البيئة</li>
-<li>يغير دورات طبيعية (CO₂ ← الاحتباس الحراري)</li>
-</ul>
-</div>`,
-      full: `
-<div class="content-block">
+<li>يغير دورات طبيعية (CO₂ ← الاحتباس الحراري)</li></ul></div>`,
+      full: `<div class="content-block">
 <h1>🌍 1. تعريف المنظومة البيئية</h1>
-<p>وحدة طبيعية تتكون من عناصر حية (نباتات + حيوانات + إنسان) وعناصر غير حية (ماء + هواء + تربة + حرارة + ضوء). كل عنصر مرتبط بالآخر في شبكة تفاعلات.</p>
-
+<p>وحدة طبيعية تتكون من عناصر حية وغير حية. كل عنصر مرتبط بالآخر في شبكة تفاعلات.</p>
 <h2>🧱 2. العناصر غير الحية (المحيا)</h2>
-<h3>🌫️ الغلاف الجوي</h3>
-<ul>
-<li>غازات تحيط بالأرض</li>
-<li>يحمي من الأشعة فوق البنفسجية والنيازك</li>
-</ul>
-<h3>🪨 الغلاف الصخري</h3>
-<ul>
-<li>القشرة الأرضية</li>
-<li>مصدر التربة والمعادن</li>
-</ul>
-<h3>🌊 الغلاف المائي</h3>
-<ul>
-<li>97.6% مياه مالحة | 2.4% مياه عذبة</li>
-<li>مصدر للحياة والطاقة</li>
-</ul>
-
-<h2>🐾 3. العناصر الحية (العشيرة الإحيائية)</h2>
-<h3>🌿 المنتجات</h3>
-<p>نباتات خضراء تقوم بالتركيب الضوئي. هي مصدر الطاقة الأساسي للسلسلة الغذائية.</p>
-<h3>🐂 المستهلكات</h3>
-<p>عاشبة / لاحمة / إنسان. تعتمد على النباتات أو الحيوانات.</p>
-<h3>🪱 المحللات</h3>
-<p>بكتيريا + فطريات + ديدان الأرض. تعيد تحويل المواد العضوية إلى عناصر بسيطة.</p>
-
-<h2>⚖️ 4. توازن المنظومة البيئية</h2>
-<h3>☀️ تدفق الطاقة</h3>
-<p>الشمس ← نباتات ← حيوانات ← تحلل ← عودة عناصر للتربة</p>
-<h3>💧 دورة الماء</h3>
-<p>تبخر ← تكاثف ← سحب ← تساقطات ← جريان سطحي + باطني</p>
-<p><strong>تدخل الإنسان:</strong> استنزاف المياه الجوفية، إزالة الغابات (يؤدي لانجراف التربة).</p>
-<h3>🧪 دورة الكربون</h3>
-<ul>
+<h3>🌫️ الغلاف الجوي</h3><ul><li>يحمي من الأشعة فوق البنفسجية والنيازك</li></ul>
+<h3>🪨 الغلاف الصخري</h3><ul><li>القشرة الأرضية — مصدر التربة والمعادن</li></ul>
+<h3>🌊 الغلاف المائي</h3><ul><li>97.6% مياه مالحة | 2.4% مياه عذبة</li></ul>
+<h2>🐾 3. العناصر الحية</h2>
+<h3>🌿 المنتجات</h3><p>نباتات خضراء تقوم بالتركيب الضوئي. مصدر الطاقة الأساسي.</p>
+<h3>🐂 المستهلكات</h3><p>عاشبة / لاحمة / إنسان. تعتمد على النباتات أو الحيوانات.</p>
+<h3>🪱 المحللات</h3><p>بكتيريا + فطريات + ديدان الأرض. تعيد تحويل المواد العضوية لعناصر بسيطة.</p>
+<h2>⚖️ 4. توازن المنظومة</h2>
+<h3>☀️ تدفق الطاقة</h3><p>الشمس ← نباتات ← حيوانات ← تحلل ← عودة عناصر للتربة</p>
+<h3>💧 دورة الماء</h3><p>تبخر ← تكاثف ← سحب ← تساقطات ← جريان سطحي + باطني</p>
+<h3>🧪 دورة الكربون</h3><ul>
 <li>النباتات تمتص CO₂</li>
-<li>الحيوانات تستهلكه عبر الغذاء</li>
-<li>يعود عبر: التنفس، التحلل، البراكين، الصخور الكلسية</li>
-</ul>
-
-<h2>🌎 5. أنواع المنظومات البيئية</h2>
-<h3>🔥 النطاق الحار (0°–30°)</h3>
-<ul>
+<li>يعود عبر: التنفس، التحلل، البراكين، الصخور الكلسية</li></ul>
+<h2>🌎 5. أنواع المنظومات</h2>
+<h3>🔥 النطاق الحار (0°–30°)</h3><ul>
 <li><strong>استوائي:</strong> مطر وغابات كثيفة</li>
 <li><strong>مداري:</strong> فصول واضحة</li>
-<li><strong>صحراوي:</strong> جفاف شديد</li>
-</ul>
-<h3>🌤️ النطاق المعتدل (30°–60°)</h3>
-<ul>
+<li><strong>صحراوي:</strong> جفاف شديد</li></ul>
+<h3>🌤️ النطاق المعتدل (30°–60°)</h3><ul>
 <li><strong>متوسطي:</strong> صيف جاف وشتاء ممطر</li>
 <li><strong>محيطي:</strong> أمطار منتظمة</li>
-<li><strong>قاري:</strong> حرارة متطرفة</li>
-</ul>
-<h3>🧊 النطاق البارد (60°–90°)</h3>
-<ul>
+<li><strong>قاري:</strong> حرارة متطرفة</li></ul>
+<h3>🧊 النطاق البارد (60°–90°)</h3><ul>
 <li><strong>تايغا:</strong> غابات صنوبر</li>
 <li><strong>توندرا:</strong> نباتات فقيرة</li>
-<li><strong>جبلي:</strong> يتغير حسب الارتفاع</li>
-</ul>
-
-<h2>⚠️ 6. تدخل الإنسان في المنظومة</h2>
-<ul>
+<li><strong>جبلي:</strong> يتغير حسب الارتفاع</li></ul>
+<h2>⚠️ 6. تدخل الإنسان</h2><ul>
 <li>التلوث الصناعي</li>
 <li>إزالة الغطاء النباتي</li>
-<li>زيادة CO₂ ← اختلال التوازن + الاحتباس الحراري</li>
-</ul>
-</div>`,
+<li>زيادة CO₂ ← اختلال التوازن + الاحتباس الحراري</li></ul></div>`,
       definitions: [
         { term: 'المنظومة البيئية', meaning: 'نظام بيولوجي يضم كائنات حية ومحيطها الطبيعي في تفاعل متبادل ومستمر.' },
         { term: 'التركيب الضوئي', meaning: 'عملية تحويل الطاقة الشمسية إلى طاقة كيميائية (غذاء) تقوم بها النباتات الخضراء.' },
         { term: 'المحللات', meaning: 'كائنات حية (بكتيريا وفطريات) تحلل المواد العضوية الميتة وتعيد عناصرها للطبيعة.' },
         { term: 'دورة الكربون', meaning: 'مسار انتقال الكربون بين الغلاف الجوي والكائنات الحية والتربة والمحيطات.' },
         { term: 'الاحتباس الحراري', meaning: 'ظاهرة ارتفاع درجة حرارة الأرض بسبب تراكم غازات كثاني أكسيد الكربون في الغلاف الجوي.' },
-        { term: 'النطاق الاستوائي', meaning: 'نطاق مناخي حار ورطب يمتد حول خط الاستواء، يتميز بأمطار غزيرة وغابات كثيفة.' },
+        { term: 'التايغا', meaning: 'منظومة غابات صنوبرية في النطاق البارد (60°–90° شمالًا).' },
+        { term: 'التوندرا', meaning: 'منظومة بيئية قطبية تتميز بالبرودة الشديدة وشُح النباتات.' },
       ],
       quiz: [
-        {
-          q: 'ما هي المكونات الحية في المنظومة البيئية؟',
-          options: ['ماء وتربة وهواء', 'منتجات ومستهلكات ومحللات', 'غلاف جوي وصخري ومائي', 'حرارة وضوء ورياح'],
-          answer: 1,
-          feedback: 'المكونات الحية هي: المنتجات (نباتات)، المستهلكات (حيوانات وإنسان)، والمحللات (بكتيريا وفطريات).'
-        },
-        {
-          q: 'ما نسبة المياه المالحة في الغلاف المائي؟',
-          options: ['50%', '75%', '97.6%', '2.4%'],
-          answer: 2,
-          feedback: '97.6% من مياه الكرة الأرضية مياه مالحة، و2.4% فقط مياه عذبة.'
-        },
-        {
-          q: 'ما المنظومة البيئية التي تتميز بأمطار غزيرة وغابات كثيفة؟',
-          options: ['الصحراوية', 'الاستوائية', 'القارية', 'التوندرا'],
-          answer: 1,
-          feedback: 'المنظومة الاستوائية تقع حول خط الاستواء وتتميز بأمطار غزيرة طوال السنة.'
-        },
-        {
-          q: 'ما دور المحللات في المنظومة البيئية؟',
-          options: ['إنتاج الغذاء', 'استهلاك النباتات', 'تفكيك المواد العضوية', 'امتصاص CO₂'],
-          answer: 2,
-          feedback: 'المحللات تفكك المواد العضوية الميتة وتعيد عناصرها إلى التربة لتستفيد منها النباتات من جديد.'
-        },
-        {
-          q: 'ما النطاق الذي تنتمي إليه الغابات الصنوبرية (التايغا)؟',
-          options: ['النطاق الحار', 'النطاق المعتدل', 'النطاق البارد', 'النطاق الجبلي'],
-          answer: 2,
-          feedback: 'التايغا هي منظومة غابات صنوبرية تقع في النطاق البارد (60°–90° شمالًا).'
-        }
+        { q: 'ما هي المكونات الحية في المنظومة البيئية؟', options: ['ماء وتربة وهواء','منتجات ومستهلكات ومحللات','غلاف جوي وصخري ومائي','حرارة وضوء ورياح'], answer: 1, feedback: 'المكونات الحية: المنتجات (نباتات)، المستهلكات (حيوانات وإنسان)، والمحللات (بكتيريا وفطريات).' },
+        { q: 'ما نسبة المياه المالحة في الغلاف المائي؟', options: ['50%','75%','97.6%','2.4%'], answer: 2, feedback: '97.6% من مياه الكرة الأرضية مياه مالحة، و2.4% فقط مياه عذبة.' },
+        { q: 'ما المنظومة البيئية التي تتميز بأمطار غزيرة وغابات كثيفة؟', options: ['الصحراوية','الاستوائية','القارية','التوندرا'], answer: 1, feedback: 'المنظومة الاستوائية تقع حول خط الاستواء وتتميز بأمطار غزيرة طوال السنة.' },
+        { q: 'ما دور المحللات في المنظومة البيئية؟', options: ['إنتاج الغذاء','استهلاك النباتات','تفكيك المواد العضوية','امتصاص CO₂'], answer: 2, feedback: 'المحللات تفكك المواد العضوية الميتة وتعيد عناصرها إلى التربة.' },
+        { q: 'ما النطاق الذي تنتمي إليه الغابات الصنوبرية (التايغا)؟', options: ['النطاق الحار','النطاق المعتدل','النطاق البارد','النطاق الجبلي'], answer: 2, feedback: 'التايغا هي منظومة غابات صنوبرية تقع في النطاق البارد (60°–90° شمالًا).' }
       ]
     }
   },
@@ -897,498 +729,270 @@ const lessons = {
     lesson3: {
       id: 'history-lesson3',
       title: 'عصر الأنوار (الفكر الإنجليزي والفرنسي)',
-      subject: 'history',
-      num: 3,
-      essence: `
-<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
+      subject: 'history', num: 3,
+      essence: `<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
 <div class="essence-card content-block">
-<p><strong>عصر الأنوار</strong> = حركة فكرية تعتمد على <strong>العقل + الحرية</strong></p>
-</div>
-<div class="essence-card content-block">
-<strong>🇬🇧 الفكر الإنجليزي:</strong>
-<ul>
+<p><strong>عصر الأنوار</strong> = حركة فكرية تعتمد على <strong>العقل + الحرية</strong></p></div>
+<div class="essence-card content-block"><strong>🇬🇧 الفكر الإنجليزي:</strong><ul>
 <li><strong>هوبز:</strong> الملكية المطلقة + تنازل الناس عن حقوقهم</li>
 <li><strong>لوك:</strong> الحرية الطبيعية + البرلمان + مقاومة الاستبداد</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>🇫🇷 الفكر الفرنسي:</strong>
-<ul>
+</ul></div>
+<div class="essence-card content-block"><strong>🇫🇷 الفكر الفرنسي:</strong><ul>
 <li><strong>مونتسكيو:</strong> فصل السلط</li>
 <li><strong>فولتير:</strong> نقد الإقطاع + دعم البرجوازية</li>
 <li><strong>روسو:</strong> العقد الاجتماعي (الشعب مصدر السلطة)</li>
-</ul>
-</div>
+</ul></div>
+<div class="essence-card content-block"><strong>📢 وسائل نشر الفكر:</strong><ul>
+<li>الصالونات الفكرية</li><li>المقاهي</li><li>الموسوعات (ديدرو)</li><li>المكتبات</li>
+</ul></div>
 <div class="essence-card content-block">
-<strong>📢 وسائل نشر الفكر:</strong>
-<ul>
-<li>الصالونات الفكرية</li>
-<li>المقاهي</li>
-<li>الموسوعات (ديدرو)</li>
-<li>المكتبات</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<p>🎯 <strong>النتيجة:</strong> ساهم في اندلاع الثورة الفرنسية</p>
-</div>`,
-      structured: `
-<div class="content-block">
+<p>🎯 <strong>النتيجة:</strong> ساهم في اندلاع الثورة الفرنسية</p></div>`,
+      structured: `<div class="content-block">
 <h1>💡 ما هو عصر الأنوار؟</h1>
 <p>حركة فكرية ظهرت في أوروبا (القرن 17–18) تدعو إلى: استعمال العقل، الحرية، محاربة الاستبداد.</p>
-
 <h2>🇬🇧 إنجلترا (القرن 17)</h2>
-<h3>⚙️ الظروف:</h3>
-<ul>
-<li>صعود البرجوازية</li>
-<li>استمرار النظام الملكي</li>
-<li>ثورات سياسية</li>
-</ul>
-
-<h3>🧔 توماس هوبز</h3>
-<ul>
+<h3>⚙️ الظروف:</h3><ul>
+<li>صعود البرجوازية</li><li>استمرار النظام الملكي</li><li>ثورات سياسية</li></ul>
+<h3>🧔 توماس هوبز</h3><ul>
 <li>يؤيد الملكية المطلقة</li>
-<li>الناس تتنازل عن حقوقها للدولة مقابل الأمن</li>
-</ul>
-
-<h3>👨 جون لوك</h3>
-<ul>
+<li>الناس تتنازل عن حقوقها للدولة مقابل الأمن</li></ul>
+<h3>👨 جون لوك</h3><ul>
 <li>الحرية الطبيعية لكل إنسان</li>
 <li>البرلمان أعلى سلطة</li>
-<li>مقاومة الاستبداد حق مشروع</li>
-</ul>
-
+<li>مقاومة الاستبداد حق مشروع</li></ul>
 <h2>🇫🇷 فرنسا (القرن 18)</h2>
-<h3>⚙️ الظروف:</h3>
-<ul>
+<h3>⚙️ الظروف:</h3><ul>
 <li>أزمة اقتصادية حادة</li>
-<li>صراع بين الإقطاع والبرجوازية</li>
-<li>تمهيد للثورة الفرنسية</li>
-</ul>
-
-<h3>⚖️ مونتسكيو</h3>
-<p>فصل السلطات: تشريعية / تنفيذية / قضائية</p>
-
-<h3>🎩 فولتير</h3>
-<ul>
-<li>نقد الإقطاع ودعم البرجوازية</li>
-<li>حرية الفكر والتعبير</li>
-</ul>
-
-<h3>📜 روسو</h3>
-<ul>
-<li>العقد الاجتماعي</li>
-<li>الشعب مصدر السلطة</li>
-</ul>
-
+<li>صراع بين الإقطاع والبرجوازية</li></ul>
+<h3>⚖️ مونتسكيو</h3><p>فصل السلطات: تشريعية / تنفيذية / قضائية</p>
+<h3>🎩 فولتير</h3><ul>
+<li>نقد الإقطاع ودعم البرجوازية</li><li>حرية الفكر والتعبير</li></ul>
+<h3>📜 روسو</h3><ul>
+<li>العقد الاجتماعي</li><li>الشعب مصدر السلطة</li></ul>
 <h2>📢 وسائل نشر الفكر</h2>
-<table>
-<thead><tr><th>الوسيلة</th><th>الدور</th></tr></thead>
-<tbody>
-<tr><td>صالونات فكرية</td><td>نقاشات النخبة</td></tr>
+<table><thead><tr><th>الوسيلة</th><th>الدور</th></tr></thead>
+<tbody><tr><td>صالونات فكرية</td><td>نقاشات النخبة</td></tr>
 <tr><td>مقاهي</td><td>تبادل الأخبار والأفكار</td></tr>
 <tr><td>الموسوعة (ديدرو)</td><td>جمع المعارف الإنسانية</td></tr>
-<tr><td>مكتبات</td><td>نشر القراءة والمعرفة</td></tr>
-</tbody>
-</table>
-</div>`,
-      full: `
-<div class="content-block">
+<tr><td>مكتبات</td><td>نشر القراءة والمعرفة</td></tr></tbody></table></div>`,
+      full: `<div class="content-block">
 <h1>🌍 1. تعريف عصر الأنوار</h1>
 <p>حركة فكرية ظهرت في أوروبا في القرن 17م (البداية) والقرن 18م (الازدهار). تعتمد على: العقل، الحرية، رفض الاستبداد.</p>
-
 <h2>🇬🇧 2. الفكر الإنجليزي</h2>
-<h3>🏛️ الظروف:</h3>
-<ul>
+<h3>🏛️ الظروف:</h3><ul>
 <li>صعود البرجوازية وتطور الاقتصاد</li>
-<li>استمرار الملكية</li>
-<li>ثورات سياسية (الثورة المجيدة)</li>
-</ul>
-
-<h3>🧔 توماس هوبز</h3>
-<ul>
+<li>ثورات سياسية (الثورة المجيدة)</li></ul>
+<h3>🧔 توماس هوبز</h3><ul>
 <li>مؤيد للملكية المطلقة</li>
-<li>الإنسان يتخلى عن جزء من حقوقه للدولة مقابل الأمن والاستقرار</li>
-</ul>
+<li>الإنسان يتخلى عن جزء من حقوقه للدولة مقابل الأمن</li></ul>
 <p><strong>مفاهيمه:</strong> الحق الطبيعي، القانون الطبيعي، الحرية = غياب العوائق</p>
-
-<h3>👨 جون لوك — مؤسس الفكر الليبرالي</h3>
-<ul>
+<h3>👨 جون لوك — مؤسس الفكر الليبرالي</h3><ul>
 <li>الحرية الطبيعية لكل إنسان</li>
 <li>البرلمان أعلى سلطة</li>
-<li>حق الشعب في رفض الظلم</li>
-<li>القانون الوضعي يصدر عن الشعب</li>
-</ul>
-
+<li>حق الشعب في رفض الظلم</li></ul>
 <h2>🇫🇷 3. الفكر الفرنسي</h2>
-<h3>🏛️ الظروف:</h3>
-<ul>
+<h3>🏛️ الظروف:</h3><ul>
 <li>هيمنة الإقطاع</li>
-<li>أزمة اقتصادية حادة</li>
-<li>غضب اجتماعي ← تمهيد للثورة الفرنسية</li>
-</ul>
-
-<h3>⚖️ مونتسكيو</h3>
-<p>نظرية فصل السلطات:</p>
-<ul>
-<li>السلطة التشريعية (تسن القوانين)</li>
-<li>السلطة التنفيذية (تطبق القوانين)</li>
-<li>السلطة القضائية (تراقب تطبيق القوانين)</li>
-</ul>
-
-<h3>🎩 فولتير</h3>
-<ul>
-<li>نقد الإقطاع</li>
-<li>دعم البرجوازية</li>
-<li>الدفاع عن الحرية الفكرية والدينية</li>
-</ul>
-
-<h3>📜 جان جاك روسو</h3>
-<ul>
+<li>أزمة اقتصادية ← تمهيد للثورة الفرنسية</li></ul>
+<h3>⚖️ مونتسكيو</h3><p>نظرية فصل السلطات: تشريعية / تنفيذية / قضائية</p>
+<h3>🎩 فولتير</h3><ul>
+<li>نقد الإقطاع</li><li>دعم البرجوازية</li><li>حرية الفكر والدين</li></ul>
+<h3>📜 جان جاك روسو</h3><ul>
 <li>نظرية العقد الاجتماعي</li>
 <li>الشعب مصدر السلطة</li>
 <li>الحكومة تخدم الشعب</li>
-<li>يمكن للشعب سحب السلطة من الحاكم الظالم</li>
-</ul>
-
-<h2>📢 4. وسائل نشر الفكر</h2>
-<ul>
-<li><strong>الصالونات الفكرية:</strong> اجتماعات النخبة للنقاش الفكري</li>
+<li>يمكن للشعب سحب السلطة من الحاكم الظالم</li></ul>
+<h2>📢 4. وسائل نشر الفكر</h2><ul>
+<li><strong>الصالونات الفكرية:</strong> اجتماعات النخبة للنقاش</li>
 <li><strong>المقاهي:</strong> تبادل الأخبار والأفكار</li>
-<li><strong>الموسوعة (ديدرو):</strong> جمع المعارف الإنسانية في مرجع ضخم</li>
-<li><strong>المكتبات:</strong> نشر القراءة والمعرفة</li>
-</ul>
-
-<h2>🎯 5. الخاتمة</h2>
-<ul>
-<li>عصر الأنوار = تحول فكري كبير في أوروبا</li>
-<li>ساهم في: نشر الحرية، محاربة الاستبداد، اندلاع الثورة الفرنسية</li>
-</ul>
-</div>`,
+<li><strong>الموسوعة (ديدرو):</strong> جمع المعارف الإنسانية</li>
+<li><strong>المكتبات:</strong> نشر القراءة والمعرفة</li></ul>
+<h2>🎯 5. الخاتمة</h2><ul>
+<li>ساهم في نشر الحرية ومحاربة الاستبداد</li>
+<li>مهّد لاندلاع الثورة الفرنسية</li></ul></div>`,
       definitions: [
         { term: 'عصر الأنوار', meaning: 'حركة فكرية أوروبية (17–18م) قامت على العقل والحرية ونقد الاستبداد.' },
         { term: 'العقد الاجتماعي', meaning: 'نظرية روسو التي تقول إن المجتمع يقوم على اتفاق بين الأفراد، والشعب هو مصدر السلطة الشرعية.' },
-        { term: 'فصل السلطات', meaning: 'مبدأ مونتسكيو القائل بضرورة توزيع السلطة بين ثلاث هيئات: تشريعية وتنفيذية وقضائية لمنع الاستبداد.' },
+        { term: 'فصل السلطات', meaning: 'مبدأ مونتسكيو القائل بتوزيع السلطة بين هيئات: تشريعية وتنفيذية وقضائية لمنع الاستبداد.' },
         { term: 'الليبرالية', meaning: 'فكر سياسي يقوم على الحرية الفردية والبرلمان وحقوق الإنسان، أسسه جون لوك.' },
-        { term: 'الموسوعة', meaning: 'مشروع ضخم أشرف عليه ديدرو لجمع كل المعارف الإنسانية في موسوعة تنويرية.' },
+        { term: 'الموسوعة', meaning: 'مشروع أشرف عليه ديدرو لجمع كل المعارف الإنسانية في موسوعة تنويرية ضخمة.' },
+        { term: 'توماس هوبز', meaning: 'فيلسوف إنجليزي أيّد الملكية المطلقة ورأى أن الإنسان يتنازل عن حقوقه للدولة مقابل الأمن.' },
+        { term: 'جون لوك', meaning: 'فيلسوف إنجليزي ومؤسس الليبرالية، دافع عن الحرية الطبيعية وحق الشعب في مقاومة الاستبداد.' },
       ],
       quiz: [
-        {
-          q: 'من المفكر الذي نادى بفصل السلطات؟',
-          options: ['روسو', 'هوبز', 'مونتسكيو', 'فولتير'],
-          answer: 2,
-          feedback: 'مونتسكيو هو صاحب نظرية فصل السلطات الثلاث: التشريعية والتنفيذية والقضائية.'
-        },
-        {
-          q: 'ما مفهوم روسو الرئيسي؟',
-          options: ['الملكية المطلقة', 'فصل السلطات', 'العقد الاجتماعي', 'حرية الصحافة'],
-          answer: 2,
-          feedback: 'روسو هو صاحب نظرية العقد الاجتماعي التي تجعل الشعب مصدر السلطة.'
-        },
-        {
-          q: 'من أسس الفكر الليبرالي بين مفكري عصر الأنوار؟',
-          options: ['هوبز', 'جون لوك', 'ديدرو', 'مونتسكيو'],
-          answer: 1,
-          feedback: 'جون لوك يُعدّ مؤسس الفكر الليبرالي لدفاعه عن الحرية الطبيعية وحق البرلمان.'
-        },
-        {
-          q: 'ما وسيلة النشر التي جمعت المعارف الإنسانية الكاملة في كتاب؟',
-          options: ['الصالونات', 'الجرائد', 'الموسوعة', 'المكتبات'],
-          answer: 2,
-          feedback: 'الموسوعة التي أشرف عليها ديدرو جمعت معارف عصر الأنوار في مرجع ضخم ومؤثر.'
-        },
-        {
-          q: 'ما الفكرة الجوهرية لعصر الأنوار؟',
-          options: ['الإيمان والروحانية', 'العقل والحرية', 'الطاعة والخضوع', 'الحروب والفتوحات'],
-          answer: 1,
-          feedback: 'عصر الأنوار قام أساسًا على توظيف العقل ورفض الاستبداد والمطالبة بالحرية.'
-        }
+        { q: 'من المفكر الذي نادى بفصل السلطات؟', options: ['روسو','هوبز','مونتسكيو','فولتير'], answer: 2, feedback: 'مونتسكيو هو صاحب نظرية فصل السلطات الثلاث: التشريعية والتنفيذية والقضائية.' },
+        { q: 'ما مفهوم روسو الرئيسي؟', options: ['الملكية المطلقة','فصل السلطات','العقد الاجتماعي','حرية الصحافة'], answer: 2, feedback: 'روسو هو صاحب نظرية العقد الاجتماعي التي تجعل الشعب مصدر السلطة.' },
+        { q: 'من أسس الفكر الليبرالي؟', options: ['هوبز','جون لوك','ديدرو','مونتسكيو'], answer: 1, feedback: 'جون لوك يُعدّ مؤسس الفكر الليبرالي لدفاعه عن الحرية الطبيعية.' },
+        { q: 'ما وسيلة النشر التي جمعت المعارف الإنسانية في كتاب؟', options: ['الصالونات','الجرائد','الموسوعة','المكتبات'], answer: 2, feedback: 'الموسوعة التي أشرف عليها ديدرو جمعت معارف عصر الأنوار.' },
+        { q: 'ما الفكرة الجوهرية لعصر الأنوار؟', options: ['الإيمان والروحانية','العقل والحرية','الطاعة والخضوع','الحروب والفتوحات'], answer: 1, feedback: 'عصر الأنوار قام أساسًا على توظيف العقل ورفض الاستبداد.' }
       ]
     },
     lesson4: {
       id: 'history-lesson4',
       title: 'الثورة الفرنسية (1789–1799)',
-      subject: 'history',
-      num: 4,
-      essence: `
-<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
+      subject: 'history', num: 4,
+      essence: `<div class="essence-chip">⚡ الخلاصة — احفظ هذا فقط</div>
 <div class="essence-card content-block">
-<p><strong>الثورة الفرنسية</strong> = سقوط الملكية المطلقة + صعود البورجوازية + حقوق الإنسان</p>
-</div>
-<div class="essence-card content-block">
-<strong>💥 الأسباب:</strong>
-<ul>
+<p><strong>الثورة الفرنسية</strong> = سقوط الملكية المطلقة + صعود البورجوازية + حقوق الإنسان</p></div>
+<div class="essence-card content-block"><strong>💥 الأسباب:</strong><ul>
 <li>ملكية مطلقة (لويس 16)</li>
 <li>عدم مساواة اجتماعية (3 طبقات)</li>
 <li>أزمة اقتصادية (ديون + فقر + غلاء الخبز)</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>🧱 الطبقات:</strong>
-<ul>
+</ul></div>
+<div class="essence-card content-block"><strong>🧱 الطبقات:</strong><ul>
 <li>نبلاء (امتيازات + ضرائب قليلة) — 1.5%</li>
 <li>رجال الدين (أراضٍ + نفوذ) — 1%</li>
 <li>الشعب (ضرائب + فقر) — 96%</li>
-</ul>
-</div>
-<div class="essence-card content-block">
-<strong>🔥 3 مراحل:</strong>
-<ol>
+</ul></div>
+<div class="essence-card content-block"><strong>🔥 3 مراحل:</strong><ol>
 <li>🟦 ملكية دستورية (1789–1792)</li>
 <li>🟥 جمهورية + الإرهاب (1792–1794)</li>
 <li>🟨 حكم البورجوازية + نابليون (1794–1799)</li>
-</ol>
-</div>
-<div class="essence-card content-block">
-<strong>🎯 النتائج:</strong>
-<ul>
-<li>حقوق الإنسان</li>
-<li>ديمقراطية (ناقصة)</li>
-<li>إلغاء الإقطاع</li>
-<li>صعود الرأسمالية</li>
-</ul>
-</div>`,
-      structured: `
-<div class="content-block">
+</ol></div>
+<div class="essence-card content-block"><strong>🎯 النتائج:</strong><ul>
+<li>حقوق الإنسان</li><li>ديمقراطية (ناقصة)</li>
+<li>إلغاء الإقطاع</li><li>صعود الرأسمالية</li>
+</ul></div>`,
+      structured: `<div class="content-block">
 <h1>💡 ما هي الثورة الفرنسية؟</h1>
 <p>ثورة اجتماعية وسياسية (1789–1799) ضد: الملكية المطلقة، الظلم الاجتماعي، النظام الإقطاعي.</p>
-
 <h2>⚙️ الأسباب</h2>
-<h3>👑 سياسية</h3>
-<ul>
+<h3>👑 سياسية</h3><ul>
 <li>الملك لويس 16 يملك كل السلطات</li>
-<li>حكم "الحق الإلهي"</li>
-</ul>
-<h3>👥 اجتماعية</h3>
-<ul>
+<li>حكم "الحق الإلهي"</li></ul>
+<h3>👥 اجتماعية</h3><ul>
 <li>3 طبقات غير متساوية: نبلاء / رجال الدين / الشعب</li>
-<li>96% من الفرنسيين يعانون من الضرائب والفقر</li>
-</ul>
-<h3>💸 اقتصادية</h3>
-<ul>
+<li>96% يعانون من الضرائب والفقر</li></ul>
+<h3>💸 اقتصادية</h3><ul>
 <li>ديون الدولة الضخمة</li>
-<li>أزمة خبز — بطالة — فقر</li>
-</ul>
-
+<li>أزمة خبز — بطالة — فقر</li></ul>
 <h2>🔥 المراحل</h2>
-<h3>🟦 1. الملكية الدستورية (1789–1792)</h3>
-<ul>
-<li>إنشاء الجمعية الوطنية</li>
+<h3>🟦 1. الملكية الدستورية (1789–1792)</h3><ul>
 <li>اقتحام الباستيل (14 يوليو)</li>
 <li>إعلان حقوق الإنسان</li>
-<li>أول دستور للبلاد</li>
-</ul>
-<h3>🟥 2. الجمهورية (عهد الإرهاب)</h3>
-<ul>
+<li>أول دستور للبلاد</li></ul>
+<h3>🟥 2. الجمهورية (عهد الإرهاب)</h3><ul>
 <li>إعدام الملك لويس 16</li>
-<li>حكم روبسبيير</li>
-<li>فترة عنف سياسي</li>
-</ul>
-<h3>🟨 3. عودة البورجوازية</h3>
-<ul>
+<li>حكم روبسبيير</li></ul>
+<h3>🟨 3. عودة البورجوازية</h3><ul>
 <li>سقوط روبسبيير</li>
-<li>دستور لصالح الأغنياء</li>
-<li>صعود نابليون (1799)</li>
-</ul>
-
+<li>صعود نابليون (1799)</li></ul>
 <h2>🎯 النتائج</h2>
-<table>
-<thead><tr><th>المجال</th><th>النتيجة</th></tr></thead>
-<tbody>
-<tr><td>سياسي</td><td>برلمان منتخب، حقوق الإنسان</td></tr>
+<table><thead><tr><th>المجال</th><th>النتيجة</th></tr></thead>
+<tbody><tr><td>سياسي</td><td>برلمان منتخب، حقوق الإنسان</td></tr>
 <tr><td>اقتصادي</td><td>تحرير الاقتصاد، توحيد النظام</td></tr>
-<tr><td>اجتماعي</td><td>إلغاء الإقطاع، تعليم مجاني</td></tr>
-</tbody>
-</table>
-</div>`,
-      full: `
-<div class="content-block">
+<tr><td>اجتماعي</td><td>إلغاء الإقطاع، تعليم مجاني</td></tr></tbody></table></div>`,
+      full: `<div class="content-block">
 <h1>🌍 1. تعريف الثورة الفرنسية</h1>
-<p>هي حركة اجتماعية وسياسية (1789–1799) أنهت الملكية المطلقة والنظام الإقطاعي، وأقامت نظامًا جمهوريًا ومبادئ حقوق الإنسان.</p>
-
+<p>حركة اجتماعية وسياسية (1789–1799) أنهت الملكية المطلقة والنظام الإقطاعي وأقامت نظامًا جمهوريًا ومبادئ حقوق الإنسان.</p>
 <h2>👑 2. فرنسا قبل الثورة</h2>
 <p>ملكية مطلقة — الملك لويس 16 يسيطر على: التشريع، التنفيذ، والقضاء.</p>
-
 <h2>👥 3. المجتمع الفرنسي</h2>
-<h3>⚜️ النبلاء — 1.5%</h3>
-<ul><li>ثروة + مناصب</li><li>إعفاء ضريبي</li></ul>
-<h3>⛪ رجال الدين — 1%</h3>
-<ul><li>10% من الأراضي الفرنسية</li><li>نفوذ ديني قوي</li></ul>
-<h3>👨‍🌾 الطبقة الثالثة — 96%</h3>
-<ul>
+<h3>⚜️ النبلاء — 1.5%</h3><ul><li>ثروة + مناصب</li><li>إعفاء ضريبي</li></ul>
+<h3>⛪ رجال الدين — 1%</h3><ul><li>10% من الأراضي الفرنسية</li><li>نفوذ ديني قوي</li></ul>
+<h3>👨‍🌾 الطبقة الثالثة — 96%</h3><ul>
 <li>بورجوازية + فلاحون + عمال</li>
-<li>ضرائب ثقيلة + فقر مدقع</li>
-</ul>
-
-<h2>💸 4. الأسباب الاقتصادية</h2>
-<ul>
+<li>ضرائب ثقيلة + فقر مدقع</li></ul>
+<h2>💸 4. الأسباب الاقتصادية</h2><ul>
 <li>معاهدة تجارية مع بريطانيا (1786) ← غزو المنتجات الإنجليزية</li>
 <li>عجز مالي ضخم للدولة</li>
-<li>أزمة 1789: قحط، غلاء الخبز، بطالة، احتجاجات</li>
-</ul>
-
+<li>أزمة 1789: قحط، غلاء الخبز، بطالة، احتجاجات</li></ul>
 <h2>🔥 5. مراحل الثورة</h2>
-<h3>🟦 المرحلة 1: الملكية الدستورية (1789–1792)</h3>
-<ul>
+<h3>🟦 المرحلة 1: الملكية الدستورية (1789–1792)</h3><ul>
 <li>تأسيس الجمعية الوطنية (17 يونيو 1789)</li>
 <li>اقتحام الباستيل (14 يوليو 1789)</li>
 <li>إعلان حقوق الإنسان (26 غشت 1789)</li>
-<li>دستور 1791 ← ملكية دستورية</li>
-</ul>
-<h3>🟥 المرحلة 2: الجمهورية (1792–1794)</h3>
-<ul>
-<li>إسقاط الملكية</li>
-<li>إعلان الجمهورية (10 غشت 1792)</li>
+<li>دستور 1791 ← ملكية دستورية</li></ul>
+<h3>🟥 المرحلة 2: الجمهورية (1792–1794)</h3><ul>
+<li>إسقاط الملكية + إعلان الجمهورية</li>
 <li>إعدام الملك</li>
-<li>حكم روبسبيير — عهد الإرهاب</li>
-</ul>
-<h3>🟨 المرحلة 3: البورجوازية (1794–1799)</h3>
-<ul>
+<li>حكم روبسبيير — عهد الإرهاب</li></ul>
+<h3>🟨 المرحلة 3: البورجوازية (1794–1799)</h3><ul>
 <li>سقوط روبسبيير</li>
-<li>حكم معتدل + دستور جديد لصالح البرجوازية</li>
-<li>انقلاب نابليون (1799)</li>
-</ul>
-
+<li>دستور جديد لصالح البرجوازية</li>
+<li>انقلاب نابليون (1799)</li></ul>
 <h2>🎯 6. نتائج الثورة</h2>
-<h3>🏛️ سياسية</h3>
-<ul>
+<h3>🏛️ سياسية</h3><ul>
 <li>برلمان منتخب</li>
-<li>إعلان حقوق الإنسان: الحرية، المساواة، الأمن، الملكية</li>
-</ul>
-<h3>💰 اقتصادية</h3>
-<ul>
+<li>إعلان حقوق الإنسان: الحرية، المساواة، الأمن، الملكية</li></ul>
+<h3>💰 اقتصادية</h3><ul>
 <li>نهاية النظام الإقطاعي</li>
-<li>تحرير السوق</li>
-<li>توحيد النظام (متر / لتر)</li>
-</ul>
-<h3>👥 اجتماعية</h3>
-<ul>
+<li>تحرير السوق + توحيد النظام (متر / لتر)</li></ul>
+<h3>👥 اجتماعية</h3><ul>
 <li>إلغاء امتيازات النبلاء</li>
 <li>مصادرة ممتلكات الكنيسة</li>
-<li>تعليم مجاني وإجباري</li>
-<li>مساواة مدنية</li>
-</ul>
-
+<li>تعليم مجاني وإجباري + مساواة مدنية</li></ul>
 <h2>📌 الخاتمة</h2>
-<p>الثورة الفرنسية أنهت الإقطاع، دعمت البورجوازية، أسست لحقوق الإنسان، ومهدت للثورة الصناعية.</p>
-</div>`,
+<p>الثورة الفرنسية أنهت الإقطاع، دعمت البورجوازية، أسست لحقوق الإنسان، ومهدت للثورة الصناعية.</p></div>`,
       definitions: [
         { term: 'الملكية المطلقة', meaning: 'نظام حكم يجمع فيه الملك كل السلطات التشريعية والتنفيذية والقضائية في يده.' },
-        { term: 'اقتحام الباستيل', meaning: 'حادثة 14 يوليو 1789 حين اقتحم الشعب سجن الباستيل رمز الاستبداد الملكي. وهي ذكرى وطنية لفرنسا.' },
+        { term: 'اقتحام الباستيل', meaning: 'حادثة 14 يوليو 1789 حين اقتحم الشعب سجن الباستيل رمز الاستبداد الملكي.' },
         { term: 'إعلان حقوق الإنسان', meaning: 'وثيقة صدرت في 26 غشت 1789 تعلن حقوق: الحرية، المساواة، الأمن، والملكية.' },
         { term: 'عهد الإرهاب', meaning: 'فترة (1793–1794) تحكم فيها روبسبيير بأسلوب قمعي قُتل خلاله آلاف الأشخاص بالمقصلة.' },
         { term: 'البورجوازية', meaning: 'الطبقة الوسطى من تجار وأطباء ومحامين ومثقفين، كانت المستفيد الأكبر من الثورة الفرنسية.' },
         { term: 'نابليون بونابرت', meaning: 'قائد عسكري استولى على السلطة عام 1799 بانقلاب أنهى الثورة وأسس الإمبراطورية الفرنسية.' },
+        { term: 'الجمعية الوطنية', meaning: 'هيئة تشريعية أسستها الطبقة الثالثة في 17 يونيو 1789 لتمثيل الشعب وإصدار الدستور.' },
       ],
       quiz: [
-        {
-          q: 'متى اندلعت الثورة الفرنسية؟',
-          options: ['1776', '1789', '1799', '1804'],
-          answer: 1,
-          feedback: 'اندلعت الثورة الفرنسية عام 1789 واستمرت حتى انقلاب نابليون عام 1799.'
-        },
-        {
-          q: 'ما نسبة الطبقة الثالثة (الشعب) في المجتمع الفرنسي؟',
-          options: ['50%', '75%', '96%', '30%'],
-          answer: 2,
-          feedback: 'كانت الطبقة الثالثة تمثل 96% من السكان لكنها تعاني من أثقل الضرائب والفقر.'
-        },
-        {
-          q: 'ما الحادثة التي تعدّ شرارة الثورة الفرنسية؟',
-          options: ['إعدام الملك', 'اقتحام الباستيل', 'صعود نابليون', 'إعلان الجمهورية'],
-          answer: 1,
-          feedback: 'اقتحام الباستيل في 14 يوليو 1789 يُعدّ الحدث المؤسس للثورة الفرنسية.'
-        },
-        {
-          q: 'من حكم فرنسا خلال عهد الإرهاب؟',
-          options: ['نابليون', 'لويس 16', 'روبسبيير', 'مونتسكيو'],
-          answer: 2,
-          feedback: 'روبسبيير قاد الحكومة خلال فترة الإرهاب (1793–1794) التي تميزت بالعنف السياسي.'
-        },
-        {
-          q: 'ما النظام الذي أنهت الثورة الفرنسية وجوده؟',
-          options: ['الجمهورية', 'الإمبراطورية', 'الإقطاع', 'الاشتراكية'],
-          answer: 2,
-          feedback: 'الثورة الفرنسية أنهت النظام الإقطاعي وألغت امتيازات النبلاء ورجال الدين.'
-        }
+        { q: 'متى اندلعت الثورة الفرنسية؟', options: ['1776','1789','1799','1804'], answer: 1, feedback: 'اندلعت الثورة الفرنسية عام 1789 واستمرت حتى انقلاب نابليون عام 1799.' },
+        { q: 'ما نسبة الطبقة الثالثة (الشعب) في المجتمع الفرنسي؟', options: ['50%','75%','96%','30%'], answer: 2, feedback: 'كانت الطبقة الثالثة تمثل 96% من السكان لكنها تعاني من أثقل الضرائب.' },
+        { q: 'ما الحادثة التي تعدّ شرارة الثورة الفرنسية؟', options: ['إعدام الملك','اقتحام الباستيل','صعود نابليون','إعلان الجمهورية'], answer: 1, feedback: 'اقتحام الباستيل في 14 يوليو 1789 يُعدّ الحدث المؤسس للثورة الفرنسية.' },
+        { q: 'من حكم فرنسا خلال عهد الإرهاب؟', options: ['نابليون','لويس 16','روبسبيير','مونتسكيو'], answer: 2, feedback: 'روبسبيير قاد الحكومة خلال فترة الإرهاب (1793–1794).' },
+        { q: 'ما النظام الذي أنهت الثورة الفرنسية وجوده؟', options: ['الجمهورية','الإمبراطورية','الإقطاع','الاشتراكية'], answer: 2, feedback: 'الثورة الفرنسية أنهت النظام الإقطاعي وألغت امتيازات النبلاء.' }
       ]
     }
   }
 };
 
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
+// ══════════════════════ STATE ══════════════════════
 let currentLesson = null;
 let currentTab = 'essence';
 let currentFilter = 'all';
 let quizState = {};
+let fcState = { index: 0, flipped: false, cards: [], seen: new Set() };
 
-function getProgress() {
-  try { return JSON.parse(localStorage.getItem('essengeo_progress') || '{}'); } catch { return {}; }
-}
-function saveProgress(data) {
-  try { localStorage.setItem('essengeo_progress', JSON.stringify(data)); } catch {}
-}
+function getProgress() { try { return JSON.parse(localStorage.getItem('essengeo_progress')||'{}'); } catch { return {}; } }
+function saveProgress(d) { try { localStorage.setItem('essengeo_progress', JSON.stringify(d)); } catch {} }
 
-// ══════════════════════════════════════════
-// RIPPLE
-// ══════════════════════════════════════════
+// ══════════════════════ RIPPLE ══════════════════════
 document.addEventListener('click', function(e) {
-  const target = e.currentTarget;
   const btn = e.target.closest('.ripple-container');
   if (!btn) return;
   const rect = btn.getBoundingClientRect();
   const d = Math.max(rect.width, rect.height);
   const r = document.createElement('span');
   r.className = 'ripple';
-  r.style.cssText = `width:${d}px;height:${d}px;right:${e.clientX - rect.right + d/2}px;top:${e.clientY - rect.top - d/2}px`;
+  r.style.cssText = `width:${d}px;height:${d}px;right:${e.clientX-rect.right+d/2}px;top:${e.clientY-rect.top-d/2}px`;
   btn.appendChild(r);
-  setTimeout(() => r.remove(), 600);
+  setTimeout(()=>r.remove(), 600);
 });
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
+// ══════════════════════ TOAST ══════════════════════
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
-// ══════════════════════════════════════════
-// SCROLL PROGRESS
-// ══════════════════════════════════════════
-window.addEventListener('scroll', () => {
-  const el = document.getElementById('lesson');
-  if (!el.classList.contains('active')) return;
-  const winH = window.innerHeight;
-  const docH = document.documentElement.scrollHeight - winH;
-  const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
-  document.getElementById('scroll-progress-bar').style.width = pct + '%';
+// ══════════════════════ SCROLL PROGRESS ══════════════════════
+window.addEventListener('scroll', ()=>{
+  if (!document.getElementById('lesson').classList.contains('active')) return;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH>0 ? (window.scrollY/docH)*100 : 0;
+  document.getElementById('scroll-progress-bar').style.width = pct+'%';
 });
 
-// ══════════════════════════════════════════
-// HOME
-// ══════════════════════════════════════════
+// ══════════════════════ HOME ══════════════════════
 function getAllLessons() {
-  const all = [];
-  for (const [subject, lessons_obj] of Object.entries(lessons)) {
-    for (const [key, lesson] of Object.entries(lessons_obj)) {
-      all.push(lesson);
-    }
-  }
-  return all;
+  return Object.values(lessons).flatMap(s=>Object.values(s));
 }
 
 function filterSubject(filter) {
   currentFilter = filter;
-  document.querySelectorAll('.subject-tab').forEach(t => {
-    t.classList.remove('active');
-  });
-  const map = { all: 'tab-all', geography: 'tab-geo', history: 'tab-hist' };
-  const activeTab = document.getElementById(map[filter]);
-  if (activeTab) activeTab.classList.add('active');
+  document.querySelectorAll('.subject-tab').forEach(t=>t.classList.remove('active'));
+  const map = {all:'tab-all',geography:'tab-geo',history:'tab-hist'};
+  document.getElementById(map[filter])?.classList.add('active');
   renderCards();
 }
 
@@ -1396,26 +1000,18 @@ function renderCards() {
   const grid = document.getElementById('cards-grid');
   const progress = getProgress();
   const all = getAllLessons();
-  const filtered = currentFilter === 'all' ? all : all.filter(l => l.subject === currentFilter);
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">لا توجد دروس في هذا القسم</div></div>`;
+  const filtered = currentFilter==='all' ? all : all.filter(l=>l.subject===currentFilter);
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">لا توجد دروس</div></div>`;
     return;
   }
-
   grid.innerHTML = filtered.map(lesson => {
-    const isGeo = lesson.subject === 'geography';
+    const isGeo = lesson.subject==='geography';
     const isDone = !!progress[lesson.id];
-    const cls = isGeo ? 'geo-card' : 'hist-card';
-    const badge = isGeo ? 'badge-geo' : 'badge-hist';
-    const label = isGeo ? 'جغرافيا' : 'تاريخ';
-    const icon = isGeo ? '📍' : '📜';
-
-    return `
-    <div class="lesson-card ${cls} ripple-container" onclick="openLesson('${lesson.subject}','${lesson.id}')">
+    return `<div class="lesson-card ${isGeo?'geo-card':'hist-card'} ripple-container" onclick="openLesson('${lesson.subject}','${lesson.id}')">
       <div class="card-top">
         <div class="card-left">
-          <span class="card-badge ${badge}">${icon} ${label}</span>
+          <span class="card-badge ${isGeo?'badge-geo':'badge-hist'}">${isGeo?'📍 جغرافيا':'📜 تاريخ'}</span>
           <div class="card-title">${lesson.title}</div>
         </div>
         <div class="card-arrow">←</div>
@@ -1423,30 +1019,22 @@ function renderCards() {
       <div class="card-bottom">
         <div class="card-modes">
           <div class="mode-dot dot-gold" title="الخلاصة">⚡</div>
-          <div class="mode-dot dot-blue" title="الفهم السريع">🔵</div>
-          <div class="mode-dot dot-purple" title="الدرس الكامل">🟣</div>
+          <div class="mode-dot dot-blue" title="الفهم">🔵</div>
+          <div class="mode-dot dot-purple" title="الكامل">🟣</div>
+          <div class="mode-dot dot-teal" title="بطاقات">🃏</div>
         </div>
-        ${isDone ? '<span class="completed-badge">✅ مكتمل</span>' : ''}
+        ${isDone?'<span class="completed-badge">✅ مكتمل</span>':''}
       </div>
     </div>`;
   }).join('');
-
-  // Update global progress
-  const total = all.length;
-  const done = all.filter(l => !!progress[l.id]).length;
-  document.getElementById('progress-text').textContent = `${done} من ${total} دروس مكتملة`;
+  const done = all.filter(l=>!!progress[l.id]).length;
+  document.getElementById('progress-text').textContent = `${done} من ${all.length} دروس مكتملة`;
 }
 
-// ══════════════════════════════════════════
-// OPEN LESSON
-// ══════════════════════════════════════════
+// ══════════════════════ OPEN LESSON ══════════════════════
 function findLesson(subject, id) {
-  const subj = lessons[subject];
-  if (!subj) return null;
-  for (const key of Object.keys(subj)) {
-    if (subj[key].id === id) return subj[key];
-  }
-  return null;
+  const s = lessons[subject]; if (!s) return null;
+  return Object.values(s).find(l=>l.id===id)||null;
 }
 
 function openLesson(subject, id) {
@@ -1454,272 +1042,336 @@ function openLesson(subject, id) {
   if (!lesson) return;
   currentLesson = lesson;
   currentTab = 'essence';
-
   document.getElementById('lesson-title-top').textContent = lesson.title;
-
-  // Complete btn
   const progress = getProgress();
   const btn = document.getElementById('complete-btn');
-  if (progress[lesson.id]) {
-    btn.textContent = '✅ مكتمل';
-    btn.classList.add('done');
-  } else {
-    btn.textContent = '✓ أتممته';
-    btn.classList.remove('done');
-  }
-
-  // Render content
+  if (progress[lesson.id]) { btn.textContent='✅ مكتمل'; btn.classList.add('done'); }
+  else { btn.textContent='✓ أتممته'; btn.classList.remove('done'); }
   renderLessonContent(lesson);
-
-  // Show lesson view
   document.getElementById('home').classList.remove('active');
   document.getElementById('lesson').classList.add('active');
-  window.scrollTo(0, 0);
-  document.getElementById('scroll-progress-bar').style.width = '0%';
-
+  window.scrollTo(0,0);
+  document.getElementById('scroll-progress-bar').style.width='0%';
   switchTab('essence');
 }
 
 function renderLessonContent(lesson) {
-  // Essence
-  document.getElementById('pane-essence').innerHTML = lesson.essence +
-    renderDefinitions(lesson.definitions);
-
-  // Structured
-  document.getElementById('pane-structured').innerHTML = lesson.structured +
-    renderDefinitions(lesson.definitions);
-
-  // Full
-  document.getElementById('pane-full').innerHTML = lesson.full +
-    renderDefinitions(lesson.definitions);
-
-  // Quiz
+  document.getElementById('pane-essence').innerHTML = lesson.essence + renderDefinitions(lesson.definitions);
+  document.getElementById('pane-structured').innerHTML = lesson.structured + renderDefinitions(lesson.definitions);
+  document.getElementById('pane-full').innerHTML = lesson.full + renderDefinitions(lesson.definitions);
+  renderFlashcards(lesson);
   renderQuiz(lesson);
-
-  // Init definitions
-  initDefinitions();
 }
 
+// ══════════════════════ DEFINITIONS ══════════════════════
 function renderDefinitions(defs) {
-  if (!defs || defs.length === 0) return '';
-  const items = defs.map((d, i) => `
-    <div class="def-item">
-      <div class="def-term" onclick="toggleDef(${i})">
-        <span class="def-term-text">📖 ${d.term}</span>
-        <span class="def-expand-icon" id="def-icon-${i}">▼</span>
-      </div>
-      <div class="def-meaning" id="def-meaning-${i}">${d.meaning}</div>
-    </div>`).join('');
-
-  return `
-  <div class="definitions-section">
+  if (!defs||!defs.length) return '';
+  return `<div class="definitions-section">
     <div class="definitions-header" onclick="toggleDefinitionsHub()">
       <div class="definitions-header-text">📚 المصطلحات الأساسية</div>
       <span class="defs-toggle" id="defs-toggle">▼</span>
     </div>
-    <div class="definitions-body" id="definitions-body">${items}</div>
+    <div class="definitions-body" id="definitions-body">
+      ${defs.map((d,i)=>`<div class="def-item">
+        <div class="def-term" onclick="toggleDef(${i})">
+          <span class="def-term-text">📖 ${d.term}</span>
+          <span class="def-expand-icon" id="def-icon-${i}">▼</span>
+        </div>
+        <div class="def-meaning" id="def-meaning-${i}">${d.meaning}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function toggleDefinitionsHub() {
+  document.getElementById('definitions-body')?.classList.toggle('open');
+  document.getElementById('defs-toggle')?.classList.toggle('open');
+}
+function toggleDef(i) {
+  document.getElementById(`def-meaning-${i}`)?.classList.toggle('open');
+  document.getElementById(`def-icon-${i}`)?.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// FLASHCARDS ENGINE
+// ══════════════════════════════════════════
+function renderFlashcards(lesson) {
+  const pane = document.getElementById('pane-flashcards');
+  if (!lesson.definitions || !lesson.definitions.length) {
+    pane.innerHTML = `<div class="empty-state"><div class="empty-icon">🃏</div><div class="empty-text">لا توجد بطاقات لهذا الدرس بعد</div></div>`;
+    return;
+  }
+  fcState = { index: 0, flipped: false, cards: [...lesson.definitions], seen: new Set() };
+  pane.innerHTML = buildFlashcardsHTML(lesson.definitions.length);
+  updateFlashcard();
+  initFCSwipe();
+}
+
+function buildFlashcardsHTML(total) {
+  const dots = Array.from({length:total},(_,i)=>`<div class="fc-dot" id="fc-dot-${i}"></div>`).join('');
+  return `<div class="fc-section">
+    <div class="fc-header">
+      <div class="fc-header-title">🃏 بطاقات المراجعة</div>
+      <div class="fc-header-sub">اضغط على البطاقة لكشف المعنى — راجع المصطلحات بسرعة</div>
+      <div class="fc-meta">
+        <div class="fc-counter">البطاقة <span id="fc-cur">1</span> من <span id="fc-tot">${total}</span></div>
+        <button class="fc-shuffle-btn ripple-container" onclick="shuffleCards()">🔀 خلط</button>
+      </div>
+    </div>
+    <div class="fc-dots" id="fc-dots">${dots}</div>
+    <div class="fc-scene" id="fc-scene" onclick="flipCard()">
+      <div class="fc-inner" id="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fc-face-label">المصطلح</div>
+          <div class="fc-term" id="fc-term">...</div>
+          <div class="fc-hint">👆 اضغط لكشف المعنى</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-face-label">المعنى</div>
+          <div class="fc-meaning" id="fc-meaning">...</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="fc-nav-btn ripple-container" id="fc-prev" onclick="fcNav(-1)" title="السابق">→</button>
+      <button class="fc-flip-btn ripple-container" onclick="flipCard()">
+        <span id="fc-flip-label">🔄 اقلب</span>
+      </button>
+      <button class="fc-nav-btn ripple-container" id="fc-next" onclick="fcNav(1)" title="التالي">←</button>
+    </div>
+    <div class="fc-swipe-hint">← اسحب يميناً أو يساراً للتنقل →</div>
+    <div class="fc-all-strip">
+      <div class="fc-strip-header" onclick="toggleFCStrip()">
+        <div class="fc-strip-title">📋 جميع البطاقات (${fcState.cards.length})</div>
+        <span class="fc-strip-toggle" id="fc-strip-toggle">▼</span>
+      </div>
+      <div class="fc-strip-body" id="fc-strip-body">
+        <div class="fc-mini-list" id="fc-mini-list"></div>
+      </div>
+    </div>
   </div>`;
 }
 
-function initDefinitions() {}
+function updateFlashcard() {
+  const { index, cards, seen, flipped } = fcState;
+  const card = cards[index];
+  if (!card) return;
 
-function toggleDefinitionsHub() {
-  const body = document.getElementById('definitions-body');
-  const toggle = document.getElementById('defs-toggle');
-  if (!body) return;
-  body.classList.toggle('open');
-  if (toggle) toggle.classList.toggle('open');
+  const inner = document.getElementById('fc-inner');
+  const termEl = document.getElementById('fc-term');
+  const meaningEl = document.getElementById('fc-meaning');
+  const curEl = document.getElementById('fc-cur');
+  const flipLabel = document.getElementById('fc-flip-label');
+  const prevBtn = document.getElementById('fc-prev');
+  const nextBtn = document.getElementById('fc-next');
+
+  if (!inner || !termEl) return;
+
+  termEl.textContent = card.term;
+  meaningEl.textContent = card.meaning;
+  if (curEl) curEl.textContent = index + 1;
+
+  inner.classList.toggle('flipped', flipped);
+  if (flipLabel) flipLabel.textContent = flipped ? '🔄 اقلب' : '🔄 اقلب';
+
+  if (prevBtn) prevBtn.disabled = index === 0;
+  if (nextBtn) nextBtn.disabled = index === cards.length - 1;
+
+  // Dots
+  document.querySelectorAll('.fc-dot').forEach((dot, i) => {
+    dot.className = 'fc-dot';
+    if (i === index) dot.classList.add('active');
+    else if (seen.has(i)) dot.classList.add('seen');
+  });
+
+  // Mini list
+  const miniList = document.getElementById('fc-mini-list');
+  if (miniList) {
+    miniList.innerHTML = cards.map((c,i)=>`
+      <div class="fc-mini-item" onclick="jumpToCard(${i})">
+        <div class="fc-mini-num">${i+1}</div>
+        <div class="fc-mini-term">${c.term}</div>
+        <div class="fc-mini-arrow">${i===index?'◀':''}</div>
+      </div>`).join('');
+  }
 }
 
-function toggleDef(i) {
-  const meaning = document.getElementById(`def-meaning-${i}`);
-  const icon = document.getElementById(`def-icon-${i}`);
-  if (!meaning) return;
-  meaning.classList.toggle('open');
-  if (icon) icon.classList.toggle('open');
+function flipCard() {
+  fcState.flipped = !fcState.flipped;
+  fcState.seen.add(fcState.index);
+  const inner = document.getElementById('fc-inner');
+  if (inner) inner.classList.toggle('flipped', fcState.flipped);
+  // Update dots
+  document.querySelectorAll('.fc-dot').forEach((dot, i) => {
+    dot.className = 'fc-dot';
+    if (i === fcState.index) dot.classList.add('active');
+    else if (fcState.seen.has(i)) dot.classList.add('seen');
+  });
 }
 
-// ══════════════════════════════════════════
-// QUIZ
-// ══════════════════════════════════════════
+function fcNav(dir) {
+  const newIdx = fcState.index + dir;
+  if (newIdx < 0 || newIdx >= fcState.cards.length) return;
+  fcState.seen.add(fcState.index);
+  fcState.index = newIdx;
+  fcState.flipped = false;
+  updateFlashcard();
+}
+
+function jumpToCard(i) {
+  fcState.seen.add(fcState.index);
+  fcState.index = i;
+  fcState.flipped = false;
+  updateFlashcard();
+}
+
+function shuffleCards() {
+  // Fisher-Yates shuffle
+  const arr = [...fcState.cards];
+  for (let i = arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  fcState.cards = arr;
+  fcState.index = 0;
+  fcState.flipped = false;
+  fcState.seen = new Set();
+  updateFlashcard();
+  showToast('🔀 تم خلط البطاقات!');
+}
+
+function toggleFCStrip() {
+  document.getElementById('fc-strip-body')?.classList.toggle('open');
+  document.getElementById('fc-strip-toggle')?.classList.toggle('open');
+}
+
+// Touch/swipe support
+function initFCSwipe() {
+  const scene = document.getElementById('fc-scene');
+  if (!scene) return;
+  let startX = 0, startY = 0;
+  scene.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive:true});
+  scene.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      // RTL: swipe left = next (visually "forward"), swipe right = prev
+      if (dx < 0) fcNav(1); else fcNav(-1);
+    }
+  }, {passive:true});
+}
+
+// ══════════════════════ QUIZ ══════════════════════
 function renderQuiz(lesson) {
   const pane = document.getElementById('pane-quiz');
-  if (!lesson.quiz || lesson.quiz.length === 0) {
+  if (!lesson.quiz||!lesson.quiz.length) {
     pane.innerHTML = `<div class="empty-state"><div class="empty-icon">🧩</div><div class="empty-text">لا يوجد اختبار لهذا الدرس بعد</div></div>`;
     return;
   }
-
-  quizState = {
-    lessonId: lesson.id,
-    total: lesson.quiz.length,
-    answered: 0,
-    correct: 0,
-    answers: {}
-  };
-
-  const questions = lesson.quiz.map((q, qi) => `
-    <div class="question-card" id="qcard-${qi}">
-      <div class="question-num">س${qi + 1}</div>
-      <div class="question-text">${q.q}</div>
-      <div class="options-list">
-        ${q.options.map((opt, oi) => `
-          <button class="option-btn ripple-container" id="opt-${qi}-${oi}" onclick="answerQ(${qi},${oi})">${opt}</button>
-        `).join('')}
+  quizState = { lessonId:lesson.id, total:lesson.quiz.length, answered:0, correct:0, answers:{} };
+  pane.innerHTML = `<div class="quiz-section">
+    <div class="quiz-header-card">
+      <div class="quiz-title">🧩 اختبر نفسك</div>
+      <div class="quiz-subtitle">${lesson.quiz.length} أسئلة — إجابة واحدة صحيحة</div>
+      <div class="quiz-score-bar">
+        <span class="quiz-score-label">النتيجة:</span>
+        <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill" style="width:0%"></div></div>
+        <span class="quiz-score-num" id="score-num">0 / ${lesson.quiz.length}</span>
       </div>
-      <div class="answer-feedback" id="feedback-${qi}"></div>
     </div>
-  `).join('');
-
-  pane.innerHTML = `
-    <div class="quiz-section">
-      <div class="quiz-header-card">
-        <div class="quiz-title">🧩 اختبر نفسك</div>
-        <div class="quiz-subtitle">${lesson.quiz.length} أسئلة — إجابة واحدة صحيحة لكل سؤال</div>
-        <div class="quiz-score-bar">
-          <span class="quiz-score-label">النتيجة:</span>
-          <div class="quiz-score-track"><div class="quiz-score-fill" id="score-fill" style="width:0%"></div></div>
-          <span class="quiz-score-num" id="score-num">0 / ${lesson.quiz.length}</span>
+    ${lesson.quiz.map((q,qi)=>`
+      <div class="question-card" id="qcard-${qi}">
+        <div class="question-num">س${qi+1}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options-list">
+          ${q.options.map((opt,oi)=>`<button class="option-btn ripple-container" id="opt-${qi}-${oi}" onclick="answerQ(${qi},${oi})">${opt}</button>`).join('')}
         </div>
-      </div>
-      ${questions}
-      <div class="quiz-result-card" id="quiz-result">
-        <div class="result-emoji" id="result-emoji"></div>
-        <div class="result-title">انتهى الاختبار!</div>
-        <div class="result-score" id="result-score"></div>
-        <div class="result-msg" id="result-msg"></div>
-        <button class="retry-btn ripple-container" onclick="retryQuiz()">🔄 إعادة الاختبار</button>
-      </div>
-    </div>`;
+        <div class="answer-feedback" id="feedback-${qi}"></div>
+      </div>`).join('')}
+    <div class="quiz-result-card" id="quiz-result">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title">انتهى الاختبار!</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="retry-btn ripple-container" onclick="retryQuiz()">🔄 إعادة الاختبار</button>
+    </div>
+  </div>`;
 }
 
 function answerQ(qi, oi) {
-  if (quizState.answers[qi] !== undefined) return;
-
-  const lesson = currentLesson;
-  const q = lesson.quiz[qi];
-  const isCorrect = oi === q.answer;
-
-  quizState.answers[qi] = oi;
-  quizState.answered++;
+  if (quizState.answers[qi]!==undefined) return;
+  const q = currentLesson.quiz[qi];
+  const isCorrect = oi===q.answer;
+  quizState.answers[qi]=oi; quizState.answered++;
   if (isCorrect) quizState.correct++;
-
-  // Style options
-  const opts = lesson.quiz[qi].options;
-  opts.forEach((_, i) => {
-    const btn = document.getElementById(`opt-${qi}-${i}`);
+  q.options.forEach((_,i)=>{
+    const btn=document.getElementById(`opt-${qi}-${i}`);
     if (!btn) return;
-    btn.disabled = true;
-    if (i === q.answer) btn.classList.add('correct');
-    else if (i === oi && !isCorrect) btn.classList.add('wrong');
+    btn.disabled=true;
+    if (i===q.answer) btn.classList.add('correct');
+    else if (i===oi&&!isCorrect) btn.classList.add('wrong');
   });
-
-  // Feedback
-  const fb = document.getElementById(`feedback-${qi}`);
-  if (fb) {
-    fb.className = 'answer-feedback ' + (isCorrect ? 'feedback-correct' : 'feedback-wrong');
-    fb.textContent = isCorrect ? '✅ إجابة صحيحة! ' + q.feedback : '❌ ' + q.feedback;
-    fb.style.display = 'block';
-  }
-
-  document.getElementById(`qcard-${qi}`).classList.add('answered');
-
-  // Update score bar
-  const pct = (quizState.correct / quizState.total) * 100;
-  document.getElementById('score-fill').style.width = pct + '%';
-  document.getElementById('score-num').textContent = `${quizState.correct} / ${quizState.total}`;
-
-  // Check completion
-  if (quizState.answered === quizState.total) {
-    setTimeout(showQuizResult, 600);
-  }
+  const fb=document.getElementById(`feedback-${qi}`);
+  if (fb) { fb.className='answer-feedback '+(isCorrect?'feedback-correct':'feedback-wrong'); fb.textContent=isCorrect?'✅ إجابة صحيحة! '+q.feedback:'❌ '+q.feedback; fb.style.display='block'; }
+  document.getElementById(`qcard-${qi}`)?.classList.add('answered');
+  const pct=(quizState.correct/quizState.total)*100;
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-num').textContent=`${quizState.correct} / ${quizState.total}`;
+  if (quizState.answered===quizState.total) setTimeout(showQuizResult,600);
 }
 
 function showQuizResult() {
-  const c = quizState.correct;
-  const t = quizState.total;
-  const pct = Math.round((c / t) * 100);
-  const card = document.getElementById('quiz-result');
-  if (!card) return;
-
-  let emoji, msg;
-  if (pct === 100) { emoji = '🏆'; msg = 'ممتاز! أتقنت هذا الدرس بالكامل.'; }
-  else if (pct >= 80) { emoji = '🎯'; msg = 'أداء رائع! راجع الأسئلة الخاطئة.'; }
-  else if (pct >= 60) { emoji = '📚'; msg = 'جيد! ركز أكثر على النقاط الضعيفة.'; }
-  else { emoji = '💪'; msg = 'راجع الدرس مجددًا ثم أعد الاختبار.'; }
-
-  document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-score').textContent = `${c} / ${t}`;
-  document.getElementById('result-score').style.color = pct >= 60 ? 'var(--green)' : 'var(--red)';
-  document.getElementById('result-msg').textContent = msg;
-  card.style.display = 'block';
-  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const c=quizState.correct,t=quizState.total,pct=Math.round(c/t*100);
+  const card=document.getElementById('quiz-result'); if(!card) return;
+  let emoji,msg;
+  if(pct===100){emoji='🏆';msg='ممتاز! أتقنت هذا الدرس بالكامل.';}
+  else if(pct>=80){emoji='🎯';msg='أداء رائع! راجع الأسئلة الخاطئة.';}
+  else if(pct>=60){emoji='📚';msg='جيد! ركز أكثر على النقاط الضعيفة.';}
+  else{emoji='💪';msg='راجع الدرس مجددًا ثم أعد الاختبار.';}
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-score').textContent=`${c} / ${t}`;
+  document.getElementById('result-score').style.color=pct>=60?'var(--green)':'var(--red)';
+  document.getElementById('result-msg').textContent=msg;
+  card.style.display='block';
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function retryQuiz() { renderQuiz(currentLesson); }
 
-function retryQuiz() {
-  renderQuiz(currentLesson);
-}
-
-// ══════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════
+// ══════════════════════ TABS ══════════════════════
 function switchTab(tab) {
-  currentTab = tab;
-  const tabs = ['essence', 'structured', 'full', 'quiz'];
-  const tabClasses = { essence: 'active-tab-gold', structured: 'active-tab-blue', full: 'active-tab-purple', quiz: 'active-tab-purple' };
-
-  tabs.forEach(t => {
-    const btn = document.getElementById(`tab-${t}`);
-    const pane = document.getElementById(`pane-${t}`);
-    if (!btn || !pane) return;
-
-    btn.className = 'tab-btn ripple-container';
-    pane.classList.remove('active');
-
-    if (t === tab) {
-      btn.classList.add(tabClasses[tab]);
-      pane.classList.add('active');
-    }
+  currentTab=tab;
+  const tabs=['essence','structured','full','flashcards','quiz'];
+  const cls={essence:'active-tab-gold',structured:'active-tab-blue',full:'active-tab-purple',flashcards:'active-tab-teal',quiz:'active-tab-purple'};
+  tabs.forEach(t=>{
+    document.getElementById(`tab-${t}`)?.setAttribute('class','tab-btn ripple-container');
+    document.getElementById(`pane-${t}`)?.classList.remove('active');
   });
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById(`tab-${tab}`)?.classList.add(cls[tab]);
+  document.getElementById(`pane-${tab}`)?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ══════════════════════════════════════════
-// COMPLETE
-// ══════════════════════════════════════════
+// ══════════════════════ COMPLETE ══════════════════════
 function toggleComplete() {
   if (!currentLesson) return;
-  const progress = getProgress();
-  const id = currentLesson.id;
-  const btn = document.getElementById('complete-btn');
-
-  if (progress[id]) {
-    delete progress[id];
-    btn.textContent = '✓ أتممته';
-    btn.classList.remove('done');
-    showToast('تم إلغاء التحديد');
-  } else {
-    progress[id] = true;
-    btn.textContent = '✅ مكتمل';
-    btn.classList.add('done');
-    showToast('أحسنت! تم تحديد الدرس كمكتمل ✅');
-  }
+  const progress=getProgress(), id=currentLesson.id;
+  const btn=document.getElementById('complete-btn');
+  if (progress[id]) { delete progress[id]; btn.textContent='✓ أتممته'; btn.classList.remove('done'); showToast('تم إلغاء التحديد'); }
+  else { progress[id]=true; btn.textContent='✅ مكتمل'; btn.classList.add('done'); showToast('أحسنت! تم تحديد الدرس كمكتمل ✅'); }
   saveProgress(progress);
 }
 
-// ══════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════
+// ══════════════════════ NAVIGATION ══════════════════════
 function goHome() {
   document.getElementById('lesson').classList.remove('active');
   document.getElementById('home').classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
   renderCards();
 }
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
+// ══════════════════════ INIT ══════════════════════
 renderCards();
 filterSubject('all');
 </script>
